@@ -1,16 +1,68 @@
 import { Component } from '@angular/core';
-import { Platform } from 'ionic-angular';
+import { Platform, ToastController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
-import { HomePage } from '../pages/home/home';
+import { config } from './app.firebase';
+import firebase from 'firebase';
+import { Network } from '@ionic-native/network';
+import { Storage } from '@ionic/storage';
+
 @Component({
-  templateUrl: 'app.html'
+  templateUrl: 'app.html',
 })
 export class MyApp {
-  rootPage:any = HomePage;
+  rootPage: any = 'LoginPage';
 
-  constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
+  constructor(
+    public platform: Platform,
+    public statusBar: StatusBar,
+    public splashScreen: SplashScreen,
+    public storage: Storage,
+    public network: Network,
+    public toastCtrl: ToastController
+  ) {
+    //INITIALIZES FIREBASE WITH THE APP
+    firebase.initializeApp(config);
+
+    //CHECKS WHETHER A USER IS ALREADY LOGGED IN, ELSE REDIRECTS TO LOGIN PAGE
+    this.storage
+      .get('user')
+      .then(val => {
+        if (val) {
+          this.rootPage = 'ProfilePage';
+        } else {
+          this.rootPage = 'LoginPage';
+        }
+      })
+      .catch(err => {
+        this.rootPage = 'LoginPage';
+        console.error(err);
+      });
+
+    //KEEPS CHECKING NETWORK CONNECTIVITY AND ALERTS USER IF DISCONNECTED
+    this.network.onchange().subscribe(networkchange => {
+      if (networkchange.type === 'online') {
+        this.toastCtrl
+          .create({
+            message: 'Back Online',
+            duration: 2000,
+            position: 'top',
+            cssClass: 'toastonline',
+          })
+          .present();
+      } else if (networkchange.type === 'offline') {
+        this.toastCtrl
+          .create({
+            message: 'You Seem To Be Offline',
+            duration: 2000,
+            position: 'top',
+            cssClass: 'toastoffline',
+          })
+          .present();
+      }
+    });
+
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -19,4 +71,3 @@ export class MyApp {
     });
   }
 }
-

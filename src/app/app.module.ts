@@ -5,26 +5,31 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 
 import { MyApp } from './app.component';
-import { HomePage } from '../pages/home/home';
+import { AuthProvider } from '../providers/auth/auth';
+import { HttpClientModule } from '@angular/common/http';
+import { GooglePlus } from '@ionic-native/google-plus';
+import { Facebook } from '@ionic-native/facebook';
+import { IonicStorageModule } from '@ionic/storage';
+import { Network } from '@ionic-native/network';
 
 @NgModule({
-  declarations: [
-    MyApp,
-    HomePage
-  ],
+  declarations: [MyApp],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp)
+    HttpClientModule,
+    IonicStorageModule.forRoot(),
+    IonicModule.forRoot(MyApp),
   ],
   bootstrap: [IonicApp],
-  entryComponents: [
-    MyApp,
-    HomePage
-  ],
+  entryComponents: [MyApp],
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
-  ]
+    { provide: ErrorHandler, useClass: IonicErrorHandler },
+    AuthProvider,
+    GooglePlus,
+    Facebook,
+    Network,
+  ],
 })
 export class AppModule {}

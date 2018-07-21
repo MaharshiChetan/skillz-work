@@ -1,43 +1,49 @@
-// import { FormBuilder, FormControl, Validator } from '@angular/forms';
 import { Component } from '@angular/core';
 import {
-  LoadingController,
   IonicPage,
   NavController,
   ToastController,
+  LoadingController,
+  ModalController,
 } from 'ionic-angular';
 import { AuthProvider } from '../../providers/auth/auth';
 
 @IonicPage()
 @Component({
-  selector: 'login-page',
-  templateUrl: 'login.html',
+  selector: 'register-page',
+  templateUrl: 'register.html',
 })
-export class LoginPage {
-  public loginForm: any;
+export class RegisterPage {
+  name: any;
+  username: any;
   email: any;
   password: any;
+  passwordconfirm: any;
 
   constructor(
-    private loadingCtrl: LoadingController,
     private navCtrl: NavController,
+    private authService: AuthProvider,
     private toastCtrl: ToastController,
-    private authService: AuthProvider
+    private loadingCtrl: LoadingController,
+    private modal: ModalController
   ) {}
 
-  loginWithEmail() {
+  ionViewDidLoad() {
+    console.log('ionViewDidLoad SignupPage');
+  }
+
+  emailRegister() {
     var loader = this.loadingCtrl.create({
       spinner: 'dots',
-      content: 'Logging In',
+      content: 'Creating Account',
     });
     loader.present();
     this.authService
-      .loginwithEmail(this.email, this.password)
+      .registerWithEmail(this.email, this.password, this.name, this.username)
       .then(res => {
         loader.dismiss();
-        console.log(res);
         if (res === true) {
-          this.navCtrl.setRoot('ProfilePage');
+          this.navCtrl.setRoot('TabsPage');
         } else if (res === 'verify') {
           this.toastCtrl
             .create({
@@ -47,15 +53,7 @@ export class LoginPage {
               cssClass: 'fail-toast',
             })
             .present();
-        } else if (res === 'password') {
-          this.toastCtrl
-            .create({
-              message: 'Please check login details',
-              position: 'top',
-              duration: 2000,
-              cssClass: 'fail-toast',
-            })
-            .present();
+          this.navCtrl.setRoot('LoginPage');
         } else {
           this.toastCtrl
             .create({
@@ -81,7 +79,7 @@ export class LoginPage {
       });
   }
 
-  googleLogin() {
+  googleRegister() {
     var loader = this.loadingCtrl.create({
       spinner: 'dots',
       content: 'Logging In',
@@ -129,7 +127,7 @@ export class LoginPage {
       });
   }
 
-  facebookLogin() {
+  facebookRegister() {
     var loader = this.loadingCtrl.create({
       spinner: 'dots',
       content: 'Logging In',
@@ -176,7 +174,16 @@ export class LoginPage {
         console.error(err);
       });
   }
-  goToSignup() {
-    this.navCtrl.push('RegisterPage');
+  goToLogin() {
+    this.navCtrl.pop();
+  }
+  showTermsModal() {
+    let modal = this.modal.create('TermsOfServicePage');
+    modal.present();
+  }
+
+  showPrivacyModal() {
+    let modal = this.modal.create('PrivacyPolicyPage');
+    modal.present();
   }
 }

@@ -1,25 +1,27 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-
-/**
- * Generated class for the TermsOfServicePage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
+import {
+  IonicPage,
+  NavController,
+  NavParams,
+  ViewController,
+} from 'ionic-angular';
 
 @IonicPage()
 @Component({
-  selector: 'page-terms-of-service',
+  selector: 'terms-of-service-page',
   templateUrl: 'terms-of-service.html',
 })
 export class TermsOfServicePage {
-
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
-  }
+  constructor(
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    private view: ViewController
+  ) {}
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad TermsOfServicePage');
   }
-
+  dismiss() {
+    this.view.dismiss();
+  }
 }
