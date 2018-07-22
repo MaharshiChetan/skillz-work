@@ -1,20 +1,26 @@
 <ion-content padding class="transparent-header">
   <img class="logo" src="assets/imgs/logo/hip-hop-2.png" />
   <div padding>
-    <ion-item>
-      <ion-input type="text" placeholder="Full Name" [(ngModel)]="name"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-input type="text" placeholder="Username" [(ngModel)]="username"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-input type="email" placeholder="Email" [(ngModel)]="email"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-input type="password" placeholder="Password" [(ngModel)]="password"></ion-input>
-    </ion-item>
-    <button ion-button block outline (click)="registerEmail()" color="light"
-      class="login-button">Signup</button>
+    <form [formGroup]="register" (ngSubmit)="emailRegister()">
+      <ion-item>
+        <ion-input type="text" placeholder="Full Name" [(ngModel)]="name"
+          formControlName="name" required></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input type="text" placeholder="Username" [(ngModel)]="username"
+          formControlName="username" required></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input type="email" placeholder="Email" [(ngModel)]="email"
+          formControlName="email" required></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input type="password" placeholder="Password" [(ngModel)]="password"
+          formControlName="password" required [minlength]="6"></ion-input>
+      </ion-item>
+      <button type="submit" ion-button block outline color="light"
+        class="login-button" [disabled]="!register.valid">Signup</button>
+    </form>
   </div>
   <!-- <div class="strike">
     <span>OR</span>

@@ -30,13 +30,13 @@ register-page {
     background-image: none;
   }
   // Fullscreen animated rainbow gradient
+  // #1de840,
+  // #1ddde8,
   ion-content {
     background: linear-gradient(
       316deg,
       #ff2400,
       #e81d1d,
-      #1de840,
-      #1ddde8,
       #2b1de8,
       #dd00f3,
       #dd00f3
@@ -57,9 +57,9 @@ register-page {
   }
   // Content
   // .scroll-content {
-  //   display: flex;
-  //   flex-direction: column;
-  //   overflow: hidden;
+  // display: flex;
+  // flex-direction: column;
+  // overflow: hidden;
   // }
   .logo {
     width: 50%;
@@ -134,6 +134,7 @@ register-page {
     .legal-action {
       font-weight: 500;
       color: $theme-color-2;
+      text-decoration: underline;
     }
   }
 }

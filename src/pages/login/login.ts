@@ -1,4 +1,4 @@
-// import { FormBuilder, FormControl, Validator } from '@angular/forms';
+import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { Component } from '@angular/core';
 import {
   LoadingController,
@@ -14,7 +14,7 @@ import { AuthProvider } from '../../providers/auth/auth';
   templateUrl: 'login.html',
 })
 export class LoginPage {
-  public loginForm: any;
+  login: FormGroup;
   email: any;
   password: any;
 
@@ -23,7 +23,16 @@ export class LoginPage {
     private navCtrl: NavController,
     private toastCtrl: ToastController,
     private authService: AuthProvider
-  ) {}
+  ) {
+    this.createForm();
+  }
+
+  createForm() {
+    this.login = new FormGroup({
+      email: new FormControl('', Validators.required),
+      password: new FormControl('', Validators.required),
+    });
+  }
 
   loginWithEmail() {
     var loader = this.loadingCtrl.create({
@@ -32,7 +41,7 @@ export class LoginPage {
     });
     loader.present();
     this.authService
-      .loginwithEmail(this.email, this.password)
+      .loginwithEmail(this.email.trim(), this.password)
       .then(res => {
         loader.dismiss();
         console.log(res);
