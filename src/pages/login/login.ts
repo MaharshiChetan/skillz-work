@@ -17,7 +17,6 @@ export class LoginPage {
   login: FormGroup;
   email: any;
   password: any;
-
   constructor(
     private loadingCtrl: LoadingController,
     private navCtrl: NavController,
@@ -90,6 +89,28 @@ export class LoginPage {
       });
   }
 
+  // doGoogleLogout(){
+  //   let env = this;
+
+  //   this.googleLoginService.doGoogleLogout()
+  //   .then(function(res) {
+  //     env.user = new GoogleUserModel();
+  //   }, function(error){
+  //     console.log("Google logout error", error);
+  //   });
+  // }
+
+  // doGoogleLogin() {
+  //   let env = this;
+
+  //   this.googleLoginService.doGoogleLogin()
+  //   .then(function(user){
+  //     env.user = user;
+  //   }, function(err){
+  //     console.log("Google Login error", err);
+  //   });
+  // }
+
   googleLogin() {
     var loader = this.loadingCtrl.create({
       spinner: 'dots',
@@ -99,9 +120,10 @@ export class LoginPage {
     this.authService
       .registerWithGoogle()
       .then(res => {
+        alert(res);
         if (res === true) {
           loader.dismiss();
-          this.navCtrl.setRoot('TabsPage');
+          this.navCtrl.setRoot('ProfilePage');
         } else if (res === 'email') {
           loader.dismiss();
           this.toastCtrl
@@ -149,7 +171,7 @@ export class LoginPage {
       .then(res => {
         if (res === true) {
           loader.dismiss();
-          this.navCtrl.setRoot('TabsPage');
+          this.navCtrl.setRoot('ProfilePage');
         } else if (res === 'email') {
           loader.dismiss();
           this.toastCtrl

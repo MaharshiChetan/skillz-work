@@ -12,7 +12,8 @@ import { Storage } from '@ionic/storage';
   templateUrl: 'app.html',
 })
 export class MyApp {
-  rootPage: any = 'LoginPage';
+  rootPage: string = '';
+  isAuthenticated = false;
 
   constructor(
     public platform: Platform,
@@ -26,6 +27,15 @@ export class MyApp {
     firebase.initializeApp(config);
 
     //CHECKS WHETHER A USER IS ALREADY LOGGED IN, ELSE REDIRECTS TO LOGIN PAGE
+    /* firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.isAuthenticated = true;
+        this.rootPage = 'ProfilePage';
+      } else {
+        this.isAuthenticated = false;
+        this.rootPage = 'LoginPage';
+      }
+    }); */
     this.storage
       .get('user')
       .then(val => {

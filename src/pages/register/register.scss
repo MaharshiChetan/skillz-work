@@ -24,10 +24,12 @@ register-page {
     text-align: center;
     background: rgba(255, 255, 255, 0.06);
     min-height: 47px;
+    position: fixed;
   }
   .footer-md::before {
     border-top: 1px solid $transparent-white;
     background-image: none;
+    position: fixed;
   }
   // Fullscreen animated rainbow gradient
   // #1de840,

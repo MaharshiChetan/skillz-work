@@ -5,6 +5,7 @@ import { Storage } from '@ionic/storage';
 import firebase from 'firebase';
 // import { SQLite } from '@ionic-native/sqlite';
 import { Facebook } from '@ionic-native/facebook';
+import { AlertController } from 'ionic-angular';
 
 @Injectable()
 export class AuthProvider {
@@ -17,7 +18,8 @@ export class AuthProvider {
     private googlePlus: GooglePlus,
     private storage: Storage,
     // private sqlite: SQLite,
-    private facebook: Facebook
+    private facebook: Facebook,
+    private alertCtrl: AlertController
   ) {
     this.storage
       .get('user')
@@ -112,7 +114,7 @@ export class AuthProvider {
           let userdata = JSON.parse(JSON.stringify(response));
 
           if (userdata.user.emailVerified === true) {
-            this.setLoginKey(userdata.uid)
+            this.setLoginKey(userdata.user.uid)
               .then(res => {
                 console.log(res);
                 resolve(true);
@@ -136,10 +138,31 @@ export class AuthProvider {
     });
   }
 
+  webGoogleLogin(): Promise<boolean> {
+    return new Promise(resolve => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase
+        .auth()
+        .signInWithPopup(provider)
+        .then(res => {
+          console.log(res);
+          resolve(true);
+        })
+        .catch(err => {
+          resolve(false);
+          console.error(err);
+        });
+    });
+  }
+
   registerWithGoogle() {
     return new Promise(resolve => {
       this.googlePlus
-        .login({})
+        .login({
+          webClientId:
+            '766344988044-rq4ldcpfb22dggipn58a03te59nhen25.apps.googleusercontent.com',
+          offline: true,
+        })
         .then(res => {
           const googleCredential = firebase.auth.GoogleAuthProvider.credential(
             null,
@@ -150,13 +173,16 @@ export class AuthProvider {
             .signInWithCredential(googleCredential)
             .then(response => {
               let userdata = JSON.parse(JSON.stringify(response));
+
+              alert(userdata.displayName);
               this.createUser(
                 userdata.uid,
                 userdata.displayName,
-                'NOUSERNAME',
+                userdata.email.substring(0, userdata.email.lastIndexOf('@')),
                 userdata.photoURL
               )
                 .then(res => {
+                  alert('res');
                   if (res === true) {
                     this.setLoginKey(userdata.uid)
                       .then(res => {
@@ -227,6 +253,7 @@ export class AuthProvider {
                 userdata.photoURL
               )
                 .then(res => {
+                  alert('res');
                   if (res === true) {
                     this.setLoginKey(userdata.uid)
                       .then(res => {
@@ -374,5 +401,9 @@ export class AuthProvider {
           console.error(err);
         });
     });
+  }
+
+  getActiveUser() {
+    return firebase.auth().currentUser;
   }
 }
