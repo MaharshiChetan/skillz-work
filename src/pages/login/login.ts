@@ -34,7 +34,7 @@ export class LoginPage {
   }
 
   loginWithEmail() {
-    var loader = this.loadingCtrl.create({
+    const loader = this.loadingCtrl.create({
       spinner: 'dots',
       content: 'Logging In',
     });
@@ -45,7 +45,7 @@ export class LoginPage {
         loader.dismiss();
         console.log(res);
         if (res === true) {
-          this.navCtrl.setRoot('ProfilePage');
+          this.navCtrl.setRoot('TabsPage');
         } else if (res === 'verify') {
           this.toastCtrl
             .create({
@@ -112,7 +112,7 @@ export class LoginPage {
   // }
 
   googleLogin() {
-    var loader = this.loadingCtrl.create({
+    const loader = this.loadingCtrl.create({
       spinner: 'dots',
       content: 'Logging In',
     });
@@ -123,7 +123,7 @@ export class LoginPage {
         alert(res);
         if (res === true) {
           loader.dismiss();
-          this.navCtrl.setRoot('ProfilePage');
+          this.navCtrl.setRoot('TabsPage');
         } else if (res === 'email') {
           loader.dismiss();
           this.toastCtrl
@@ -161,7 +161,7 @@ export class LoginPage {
   }
 
   facebookLogin() {
-    var loader = this.loadingCtrl.create({
+    const loader = this.loadingCtrl.create({
       spinner: 'dots',
       content: 'Logging In',
     });
@@ -171,7 +171,7 @@ export class LoginPage {
       .then(res => {
         if (res === true) {
           loader.dismiss();
-          this.navCtrl.setRoot('ProfilePage');
+          this.navCtrl.setRoot('TabsPage');
         } else if (res === 'email') {
           loader.dismiss();
           this.toastCtrl

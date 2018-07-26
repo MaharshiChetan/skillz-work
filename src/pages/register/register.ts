@@ -106,7 +106,7 @@ export class RegisterPage {
       .then(res => {
         if (res === true) {
           loader.dismiss();
-          this.navCtrl.setRoot('ProfilePage');
+          this.navCtrl.setRoot('TabsPage');
         } else if (res === 'email') {
           loader.dismiss();
           this.toastCtrl
@@ -154,7 +154,7 @@ export class RegisterPage {
       .then(res => {
         if (res === true) {
           loader.dismiss();
-          this.navCtrl.setRoot('ProfilePage');
+          this.navCtrl.setRoot('TabsPage');
         } else if (res === 'email') {
           loader.dismiss();
           this.toastCtrl

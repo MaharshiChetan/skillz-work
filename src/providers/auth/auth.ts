@@ -5,7 +5,6 @@ import { Storage } from '@ionic/storage';
 import firebase from 'firebase';
 // import { SQLite } from '@ionic-native/sqlite';
 import { Facebook } from '@ionic-native/facebook';
-import { AlertController } from 'ionic-angular';
 
 @Injectable()
 export class AuthProvider {
@@ -18,8 +17,7 @@ export class AuthProvider {
     private googlePlus: GooglePlus,
     private storage: Storage,
     // private sqlite: SQLite,
-    private facebook: Facebook,
-    private alertCtrl: AlertController
+    private facebook: Facebook
   ) {
     this.storage
       .get('user')
@@ -238,6 +236,7 @@ export class AuthProvider {
       this.facebook
         .login(['public_profile', 'user_friends', 'email'])
         .then(response => {
+          alert(response);
           const facebookCredential = firebase.auth.FacebookAuthProvider.credential(
             response.authResponse.accessToken
           );
@@ -245,6 +244,7 @@ export class AuthProvider {
             .auth()
             .signInWithCredential(facebookCredential)
             .then(response => {
+              alert(response);
               let userdata = JSON.parse(JSON.stringify(response));
               this.createUser(
                 userdata.uid,
@@ -320,12 +320,6 @@ export class AuthProvider {
 
   logout() {
     return new Promise(resolve => {
-      this.googlePlus.logout().catch(err => {
-        console.error(err);
-      });
-      this.facebook.logout().catch(err => {
-        console.error(err);
-      });
       firebase
         .auth()
         .signOut()
@@ -333,6 +327,12 @@ export class AuthProvider {
           console.error(err);
         });
       this.storage.remove('user');
+      this.googlePlus.logout().catch(err => {
+        console.error(err);
+      });
+      this.facebook.logout().catch(err => {
+        console.error(err);
+      });
     });
   }
 

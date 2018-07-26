@@ -40,7 +40,7 @@ export class MyApp {
       .get('user')
       .then(val => {
         if (val) {
-          this.rootPage = 'ProfilePage';
+          this.rootPage = 'TabsPage';
         } else {
           this.rootPage = 'LoginPage';
         }
