@@ -10,19 +10,22 @@
         onerror="this.src='userProfile.profilephoto'" />
       <button ion-button color="danger">Change image</button>
     </ion-avatar>
-    <ion-list>
+    <form [formGroup]="form" (ngSubmit)="updateUserProfile()">
+      <ion-list>
+        <ion-item>
+          <ion-label stacked>Username</ion-label>
+          <ion-input type="text" [value]="userProfile.userName" name="username"
+            formControlName="username"></ion-input>
+        </ion-item>
 
-      <ion-item>
-        <ion-label stacked>Username</ion-label>
-        <ion-input type="text" [value]="userProfile.userName"></ion-input>
-      </ion-item>
+        <ion-item>
+          <ion-label stacked>Full Name</ion-label>
+          <ion-input type="text" [value]="userProfile.displayName" name="username"
+            formControlName="name"></ion-input>
+        </ion-item>
 
-      <ion-item>
-        <ion-label stacked>Full Name</ion-label>
-        <ion-input type="text" [value]="userProfile.displayName"></ion-input>
-      </ion-item>
-
-      <button ion-button outline block (click)="updateUserProfile()">Save</button>
-    </ion-list>
+        <button ion-button outline block [disabled]="!form.valid">Save</button>
+      </ion-list>
+    </form>
   </div>
 </ion-content>

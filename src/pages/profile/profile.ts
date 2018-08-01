@@ -66,15 +66,11 @@ export class ProfilePage {
     private modalCtrl: ModalController
   ) {}
 
-  ionViewDidLoad() {
+  ionViewWillEnter() {
     this.fetchUserProfile();
   }
-
   fetchUserProfile() {
-    const loader = this.loadingCtrl.create({
-      spinner: 'dots',
-      content: 'Fetching Data',
-    });
+    const loader = this.loadingCtrl.create();
     loader.present();
     this.authService.getUserDetails().then(user => {
       this.userDetails = user;

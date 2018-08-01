@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { FormControl, Validators, FormGroup } from '@angular/forms';
+import firebase from 'firebase';
 import {
   IonicPage,
   NavController,
@@ -6,6 +8,7 @@ import {
   ActionSheetController,
   Platform,
   LoadingController,
+  ToastController,
 } from 'ionic-angular';
 import { CameraProvider } from '../../providers/camera/camera';
 import { AuthProvider } from '../../providers/auth/auth';
@@ -18,6 +21,7 @@ import { AuthProvider } from '../../providers/auth/auth';
 export class EditProfilePage {
   chosenPicture: any;
   userProfile: any;
+  form: FormGroup;
 
   constructor(
     private navCtrl: NavController,
@@ -25,20 +29,73 @@ export class EditProfilePage {
     private cameraService: CameraProvider,
     private platform: Platform,
     private loadingCtrl: LoadingController,
-    private authService: AuthProvider
-  ) {}
+    private authService: AuthProvider,
+    private toastCtrl: ToastController
+  ) {
+    this.createForm();
+  }
 
   ionViewWillEnter() {
     const loader = this.loadingCtrl.create();
     loader.present();
     this.authService.getUserDetails().then(userProfile => {
       this.userProfile = userProfile;
-      console.log(this.userProfile);
       loader.dismiss();
     });
   }
 
-  updateUserProfile() {}
+  createForm() {
+    this.form = new FormGroup({
+      name: new FormControl('', Validators.required),
+      username: new FormControl('', Validators.required),
+    });
+  }
+
+  updateUserProfile() {
+    const loader = this.loadingCtrl.create();
+    loader.present();
+    const name = this.form.get('name').value;
+    const username = this.form.get('username').value;
+    const uid = this.authService.getActiveUser().uid;
+    if (this.chosenPicture) {
+      const imageStore = firebase
+        .storage()
+        .ref('/profileimages')
+        .child(uid);
+      imageStore.putString(this.chosenPicture, 'data_url').then(res => {
+        firebase
+          .storage()
+          .ref('/profileimages')
+          .child(uid)
+          .getDownloadURL()
+          .then(url => {
+            this.authService
+              .createUser(uid, name, username, url)
+              .then(res => {
+                loader.dismiss();
+                this.presentSuccessToast();
+                this.navCtrl.popToRoot();
+              })
+              .catch(e => {
+                loader.dismiss();
+                this.presentFailToast();
+              });
+          });
+      });
+    } else {
+      this.authService
+        .createUser(uid, name, username, this.userProfile.profilephoto)
+        .then(res => {
+          loader.dismiss();
+          this.presentSuccessToast();
+          this.navCtrl.popToRoot();
+        })
+        .catch(e => {
+          loader.dismiss();
+          this.presentFailToast();
+        });
+    }
+  }
 
   changePicture() {
     const actionsheet = this.actionsheetCtrl.create({
@@ -103,5 +160,26 @@ export class EditProfilePage {
         alert(error);
       }
     );
+  }
+
+  presentFailToast() {
+    this.toastCtrl
+      .create({
+        message: 'Failed to updated your profile!',
+        position: 'top',
+        duration: 2000,
+        cssClass: 'fail-toast',
+      })
+      .present();
+  }
+  presentSuccessToast() {
+    this.toastCtrl
+      .create({
+        message: 'Succefully updated your profile!',
+        position: 'top',
+        duration: 2000,
+        cssClass: 'fail-toast',
+      })
+      .present();
   }
 }
