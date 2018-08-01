@@ -16,7 +16,6 @@ import { AuthProvider } from '../../providers/auth/auth';
   templateUrl: 'edit-profile.html',
 })
 export class EditProfilePage {
-  placeholder = '';
   chosenPicture: any;
   userProfile: any;
 
@@ -30,11 +29,16 @@ export class EditProfilePage {
   ) {}
 
   ionViewWillEnter() {
+    const loader = this.loadingCtrl.create();
+    loader.present();
     this.authService.getUserDetails().then(userProfile => {
       this.userProfile = userProfile;
       console.log(this.userProfile);
+      loader.dismiss();
     });
   }
+
+  updateUserProfile() {}
 
   changePicture() {
     const actionsheet = this.actionsheetCtrl.create({

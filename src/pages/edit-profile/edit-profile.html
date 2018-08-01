@@ -22,7 +22,7 @@
         <ion-input type="text" [value]="userProfile.displayName"></ion-input>
       </ion-item>
 
-      <button ion-button outline block>Save</button>
+      <button ion-button outline block (click)="updateUserProfile()">Save</button>
     </ion-list>
   </div>
 </ion-content>
