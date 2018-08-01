@@ -13,6 +13,9 @@ import { IonicStorageModule } from '@ionic/storage';
 import { Network } from '@ionic-native/network';
 import { CameraProvider } from '../providers/camera/camera';
 import { Camera } from '@ionic-native/camera';
+import { CallNumber } from '@ionic-native/call-number';
+import { SocialSharing } from '@ionic-native/social-sharing';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 
 @NgModule({
   declarations: [MyApp],
@@ -32,6 +35,9 @@ import { Camera } from '@ionic-native/camera';
     Facebook,
     Network,
     Camera,
+    CallNumber,
+    SocialSharing,
+    InAppBrowser,
 
     AuthProvider,
     CameraProvider,

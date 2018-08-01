@@ -1,5 +1,10 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { NavController, IonicPage } from 'ionic-angular';
+import { CallNumber } from '@ionic-native/call-number';
+import { SocialSharing } from '@ionic-native/social-sharing';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
+
+import { ContactModel } from './contact.model';
 
 @IonicPage()
 @Component({
@@ -7,29 +12,45 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
   templateUrl: 'events.html',
 })
 export class EventsPage {
-  concerts = [
-    {
-      name: 'yeezy world tour 2017',
-      artistName: 'Kanye West',
-      artistImage: 'assets/img/misc/kanye_west.png',
-      color: '#f73e53',
-    },
-    {
-      name: 'yeezy world tour 2017',
-      artistName: 'Kanye West',
-      artistImage: 'assets/img/misc/kanye_west.png',
-      color: '#0be3ff',
-    },
-    {
-      name: 'yeezy world tour 2017',
-      artistName: 'Kanye West',
-      artistImage: 'assets/img/misc/kanye_west.png',
-      color: '#fdd427',
-    },
-  ];
-  constructor(public navCtrl: NavController, public navParams: NavParams) {}
+  contact: ContactModel = new ContactModel();
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad EventsPage');
+  constructor(
+    private navCtrl: NavController,
+    private callNumber: CallNumber,
+    private inAppBrowser: InAppBrowser,
+    private socialSharing: SocialSharing
+  ) {}
+
+  call(number: string) {
+    this.callNumber
+      .callNumber(number, true)
+      .then(() => console.log('Launched dialer!'))
+      .catch(() => console.log('Error launching dialer'));
+  }
+
+  sendMail(email: string) {
+    this.socialSharing
+      .canShareViaEmail()
+      .then(() => {
+        this.socialSharing
+          .shareViaEmail(
+            "Hello, I'm trying this fantastic app that will save me hours of development.",
+            'This app is the best!',
+            [email]
+          )
+          .then(() => {
+            console.log('Success!');
+          })
+          .catch(() => {
+            console.log('Error');
+          });
+      })
+      .catch(() => {
+        console.log('Sharing via email is not possible');
+      });
+  }
+
+  openInAppBrowser(website: string) {
+    this.inAppBrowser.create(website, '_blank', 'location=yes');
   }
 }

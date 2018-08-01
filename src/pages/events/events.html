@@ -1,12 +1,14 @@
 <ion-header>
-
   <ion-navbar>
-    <ion-title>events</ion-title>
+    <ion-title>Events</ion-title>
   </ion-navbar>
-
 </ion-header>
 
-
 <ion-content padding>
-
+  <ion-slides class="contact-slides" pager="true" autoplay="4000"
+    loop="false">
+    <ion-slide class="contact-slide" *ngFor="let image of contact.images">
+      <!-- <background-image class="slide-image" [src]="image"></background-image> -->
+    </ion-slide>
+  </ion-slides>
 </ion-content>
