@@ -16,7 +16,7 @@ export class CameraProvider {
   // This method takes optional parameters to make it more customizable
   getImage(
     pictureSourceType,
-    crop = false,
+    crop = true,
     quality = 50,
     allowEdit = true,
     saveToAlbum = true

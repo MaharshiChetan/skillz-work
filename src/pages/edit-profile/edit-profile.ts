@@ -4,7 +4,6 @@ import firebase from 'firebase';
 import {
   IonicPage,
   NavController,
-  NavParams,
   ActionSheetController,
   Platform,
   LoadingController,
