@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Edit Profile</ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content padding text-center>
+  <div *ngIf="userProfile">
+    <ion-avatar (click)="changePicture()">
+      <img class="image" [src]="chosenPicture || userProfile.profilephoto"
+        onerror="this.src='userProfile.profilephoto'" />
+      <button ion-button color="danger">Change image</button>
+    </ion-avatar>
+    <ion-list>
+
+      <ion-item>
+        <ion-label stacked>Username</ion-label>
+        <ion-input type="text" [value]="userProfile.userName"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label stacked>Full Name</ion-label>
+        <ion-input type="text" [value]="userProfile.displayName"></ion-input>
+      </ion-item>
+
+      <button ion-button outline block>Save</button>
+    </ion-list>
+  </div>
+</ion-content>

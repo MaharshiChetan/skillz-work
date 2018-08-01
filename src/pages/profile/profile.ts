@@ -14,7 +14,7 @@ import { AuthProvider } from '../../providers/auth/auth';
   selector: 'profile-page',
   templateUrl: 'profile.html',
 })
-export class ProfilePage implements OnInit {
+export class ProfilePage {
   userDetails: any;
 
   posts = [
@@ -66,22 +66,26 @@ export class ProfilePage implements OnInit {
     private modalCtrl: ModalController
   ) {}
 
-  ionViewWillEnter() {
-    if (!this.userDetails) {
-      const loader = this.loadingCtrl.create({
-        spinner: 'dots',
-        content: 'Fetching Data',
-      });
-      loader.present();
-      this.authService.getUserDetails().then(user => {
-        this.userDetails = user;
-        console.log(this.userDetails);
-        loader.dismiss();
-      });
-    }
+  ionViewDidLoad() {
+    this.fetchUserProfile();
   }
 
-  ngOnInit() {}
+  fetchUserProfile() {
+    const loader = this.loadingCtrl.create({
+      spinner: 'dots',
+      content: 'Fetching Data',
+    });
+    loader.present();
+    this.authService.getUserDetails().then(user => {
+      this.userDetails = user;
+      console.log(this.userDetails);
+      loader.dismiss();
+    });
+  }
+
+  editUserProfile() {
+    this.navCtrl.push('EditProfilePage');
+  }
 
   logout() {
     this.authService.logout();

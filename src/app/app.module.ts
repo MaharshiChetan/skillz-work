@@ -11,6 +11,8 @@ import { GooglePlus } from '@ionic-native/google-plus';
 import { Facebook } from '@ionic-native/facebook';
 import { IonicStorageModule } from '@ionic/storage';
 import { Network } from '@ionic-native/network';
+import { CameraProvider } from '../providers/camera/camera';
+import { Camera } from '@ionic-native/camera';
 
 @NgModule({
   declarations: [MyApp],
@@ -26,10 +28,13 @@ import { Network } from '@ionic-native/network';
     StatusBar,
     SplashScreen,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
-    AuthProvider,
     GooglePlus,
     Facebook,
     Network,
+    Camera,
+
+    AuthProvider,
+    CameraProvider,
   ],
 })
 export class AppModule {}
