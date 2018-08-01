@@ -49,3 +49,14 @@
   width: 90%;
   border-radius: 10px;
 }
+.success-toast .toast-container {
+  background-color: #247000;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.success-toast.toast-md .toast-wrapper {
+  top: 60px;
+  width: 90%;
+  border-radius: 10px;
+}

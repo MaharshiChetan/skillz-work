@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import {
   IonicPage,
   NavController,
@@ -6,6 +6,7 @@ import {
   LoadingController,
   ToastController,
   ModalController,
+  FabContainer,
 } from 'ionic-angular';
 import { AuthProvider } from '../../providers/auth/auth';
 
@@ -67,19 +68,27 @@ export class ProfilePage {
   ) {}
 
   ionViewWillEnter() {
-    this.fetchUserProfile();
-  }
-  fetchUserProfile() {
-    const loader = this.loadingCtrl.create();
-    loader.present();
-    this.authService.getUserDetails().then(user => {
-      this.userDetails = user;
-      console.log(this.userDetails);
-      loader.dismiss();
-    });
+    this.fetchUserProfile(null);
   }
 
-  editUserProfile() {
+  fetchUserProfile(refresher) {
+    if (refresher != null) {
+      this.authService.getUserDetails().then(user => {
+        this.userDetails = user;
+        refresher.complete();
+      });
+    } else {
+      const loader = this.loadingCtrl.create();
+      loader.present();
+      this.authService.getUserDetails().then(user => {
+        this.userDetails = user;
+        loader.dismiss();
+      });
+    }
+  }
+
+  editUserProfile(fab: FabContainer) {
+    fab.close();
     this.navCtrl.push('EditProfilePage');
   }
 
@@ -114,7 +123,8 @@ export class ProfilePage {
       .present();
   }
 
-  goToSettingsModal() {
+  goToSettingsModal(fab: FabContainer) {
+    fab.close();
     const modal = this.modalCtrl.create('SettingsPage');
     modal.present();
   }

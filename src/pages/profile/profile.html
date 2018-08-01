@@ -1,4 +1,7 @@
 <ion-content class="container transparent-header">
+  <ion-refresher (ionRefresh)="fetchUserProfile($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <div class="card-profile" *ngIf="userDetails">
     <div class="card-profile_visual">
       <img [src]="userDetails.profilephoto" style="opacity: 0.5;" height="100%"
@@ -8,27 +11,27 @@
     <div class="card-profile_user-infos">
       <span class="infos_name">{{userDetails.displayName}}</span>
       <span class="infos_nick">@{{userDetails.userName}}</span>
-      <ion-fab center middle>
+      <ion-fab center middle #fab>
         <button ion-fab color="danger">
           <ion-icon name="add"></ion-icon>
         </button>
-        <ion-fab-list side="top">
+        <!-- <ion-fab-list side="top">
           <button ion-fab color="primary" (click)="fetchUserProfile()">
             <ion-icon ios="ios-refresh" md="md-refresh"></ion-icon>
           </button>
-        </ion-fab-list>
+        </ion-fab-list> -->
         <!-- <ion-fab-list side="bottom">
           <button ion-fab color="secondary">
             <ion-icon name="logo-facebook"></ion-icon>
           </button>
         </ion-fab-list> -->
         <ion-fab-list side="left">
-          <button ion-fab color="light" (click)="editUserProfile()">
+          <button ion-fab color="light" (click)="editUserProfile(fab)">
             <ion-icon ios="ios-create" md="md-create"></ion-icon>
           </button>
         </ion-fab-list>
         <ion-fab-list side="right">
-          <button ion-fab color="dark" (click)="goToSettingsModal()">
+          <button ion-fab color="dark" (click)="goToSettingsModal(fab)">
             <ion-icon name="md-settings"></ion-icon>
           </button>
         </ion-fab-list>

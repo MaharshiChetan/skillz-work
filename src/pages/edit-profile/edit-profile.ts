@@ -172,13 +172,14 @@ export class EditProfilePage {
       })
       .present();
   }
+
   presentSuccessToast() {
     this.toastCtrl
       .create({
         message: 'Succefully updated your profile!',
         position: 'top',
         duration: 2000,
-        cssClass: 'fail-toast',
+        cssClass: 'success-toast',
       })
       .present();
   }
