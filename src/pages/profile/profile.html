@@ -1,3 +1,10 @@
+<!-- <ion-header>
+  <ion-navbar>
+    <ion-title>
+      Profile
+    </ion-title>
+  </ion-navbar>
+</ion-header> -->
 <ion-content class="container transparent-header">
   <ion-refresher (ionRefresh)="fetchUserProfile($event)">
     <ion-refresher-content></ion-refresher-content>
@@ -15,11 +22,11 @@
         <button ion-fab color="danger">
           <ion-icon name="add"></ion-icon>
         </button>
-        <!-- <ion-fab-list side="top">
-          <button ion-fab color="primary" (click)="fetchUserProfile()">
-            <ion-icon ios="ios-refresh" md="md-refresh"></ion-icon>
+        <ion-fab-list side="top">
+          <button ion-fab color="primary" (click)="uploadPost()">
+            <ion-icon ios="ios-images" md="md-images"></ion-icon>
           </button>
-        </ion-fab-list> -->
+        </ion-fab-list>
         <!-- <ion-fab-list side="bottom">
           <button ion-fab color="secondary">
             <ion-icon name="logo-facebook"></ion-icon>

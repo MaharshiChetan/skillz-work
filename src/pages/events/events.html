@@ -1,14 +1,47 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>Events</ion-title>
-  </ion-navbar>
+  <ion-toolbar>
+    <ion-buttons start>
+      <button ion-button icon-only>
+        <ion-icon ios="ios-star" md="md-star"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>
+      Upcoming Events
+    </ion-title>
+  </ion-toolbar>
 </ion-header>
-
-<ion-content padding>
-  <ion-slides class="contact-slides" pager="true" autoplay="4000"
-    loop="false">
-    <ion-slide class="contact-slide" *ngFor="let image of contact.images">
-      <!-- <background-image class="slide-image" [src]="image"></background-image> -->
-    </ion-slide>
-  </ion-slides>
+<ion-content>
+  <ion-card *ngFor="let card of cards">
+    <img [src]="card.imageUrl" (click)="goToEventDetails(card)" />
+    <ion-card-content text-center>
+      <h2 class="card-title">
+        <strong>
+          {{card.title}}
+        </strong>
+      </h2>
+      <p>
+        {{card.description}}
+      </p>
+    </ion-card-content>
+    <ion-row no-padding>
+      <ion-col>
+        <button ion-button clear small color="danger" icon-left (click)="favorite(card)">
+          <ion-icon [ios]="iosFavorite" [md]="mdFavorite" out-line></ion-icon>
+          Favorite
+        </button>
+      </ion-col>
+      <ion-col text-center>
+        <button ion-button clear small color="danger" icon-left (click)="goToEventDetails(card)">
+          <ion-icon ios="ios-eye" md="md-eye"></ion-icon>
+          Read
+        </button>
+      </ion-col>
+      <ion-col text-right>
+        <button ion-button clear small color="danger" icon-left (click)="share(card)">
+          <ion-icon name='share-alt'></ion-icon>
+          Share
+        </button>
+      </ion-col>
+    </ion-row>
+  </ion-card>
 </ion-content>

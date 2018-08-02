@@ -1,10 +1,5 @@
 import { Component } from '@angular/core';
 import { NavController, IonicPage } from 'ionic-angular';
-import { CallNumber } from '@ionic-native/call-number';
-import { SocialSharing } from '@ionic-native/social-sharing';
-import { InAppBrowser } from '@ionic-native/in-app-browser';
-
-import { ContactModel } from './contact.model';
 
 @IonicPage()
 @Component({
@@ -12,45 +7,65 @@ import { ContactModel } from './contact.model';
   templateUrl: 'events.html',
 })
 export class EventsPage {
-  contact: ContactModel = new ContactModel();
+  mdFavorite: string = 'ios-star-outline';
+  iosFavorite: string = 'ios-star-outline';
 
-  constructor(
-    private navCtrl: NavController,
-    private callNumber: CallNumber,
-    private inAppBrowser: InAppBrowser,
-    private socialSharing: SocialSharing
-  ) {}
+  fav = false;
+  cards = [
+    {
+      imageUrl: 'assets/img/card/nin-live.png',
+      title: 'Nine Inch Nails Live',
+      description:
+        'The most popular industrial group ever, and largely responsible for bringing the music to a mass audience.',
+    },
+    {
+      imageUrl: 'assets/img/card/badu-live.png',
+      title: 'Erykah Badu',
+      description:
+        "American singer-songwriter, record producer, activist, and actress, Badu's style is a prime example of neo-soul.",
+    },
+    {
+      imageUrl: 'assets/img/card/queen-live.png',
+      title: 'Queen',
+      description:
+        'The British rock band formed in London in 1970, and is considered one of the biggest stadium rock bands in the world.',
+    },
+    {
+      imageUrl: 'assets/img/card/bjork-live.jpg',
+      title: 'Björk',
+      description: 'Björk is an Icelandic singer, songwriter and actress.',
+    },
+    {
+      imageUrl: 'assets/img/card/rundmc-live.png',
+      title: 'Run-D.M.C.',
+      description:
+        'The American hip hop group widely acknowledged as one of the most influential acts in the history of hip hop.',
+    },
+  ];
 
-  call(number: string) {
-    this.callNumber
-      .callNumber(number, true)
-      .then(() => console.log('Launched dialer!'))
-      .catch(() => console.log('Error launching dialer'));
+  constructor(public navCtrl: NavController) {}
+
+  cardTapped(card) {
+    alert(card.title + ' was tapped.');
   }
 
-  sendMail(email: string) {
-    this.socialSharing
-      .canShareViaEmail()
-      .then(() => {
-        this.socialSharing
-          .shareViaEmail(
-            "Hello, I'm trying this fantastic app that will save me hours of development.",
-            'This app is the best!',
-            [email]
-          )
-          .then(() => {
-            console.log('Success!');
-          })
-          .catch(() => {
-            console.log('Error');
-          });
-      })
-      .catch(() => {
-        console.log('Sharing via email is not possible');
-      });
+  share(card) {
+    alert(card.title + ' was shared.');
   }
 
-  openInAppBrowser(website: string) {
-    this.inAppBrowser.create(website, '_blank', 'location=yes');
+  listen(card) {
+    alert('Listening to ' + card.title);
+  }
+
+  favorite(card) {
+    if (this.fav) {
+      this.fav = false;
+      this.mdFavorite = 'md-star-outline';
+      this.iosFavorite = 'ios-star-outline';
+    } else {
+      this.fav = true;
+      this.mdFavorite = 'md-star';
+      this.iosFavorite = 'ios-star';
+    }
   }
 }

@@ -1,0 +1,15 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Events</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <div class="header-banner">
+    <ion-slides class="home-slide" autoplay="2000" loop="true" speed="1000">
+      <ion-slide *ngFor="let image of imageArray">
+        <img [src]="image.image" style="width:100%;height:100%;" />
+      </ion-slide>
+    </ion-slides>
+  </div>
+</ion-content>

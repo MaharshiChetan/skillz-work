@@ -123,6 +123,8 @@ export class ProfilePage {
       .present();
   }
 
+  uploadPost() {}
+
   goToSettingsModal(fab: FabContainer) {
     fab.close();
     const modal = this.modalCtrl.create('SettingsPage');
