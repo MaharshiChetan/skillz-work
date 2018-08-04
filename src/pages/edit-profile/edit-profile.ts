@@ -83,7 +83,7 @@ export class EditProfilePage {
       });
     } else {
       this.authService
-        .createUser(uid, name, username, this.userProfile.profilephoto)
+        .createUser(uid, name, username, this.userProfile.profilePhoto)
         .then(res => {
           loader.dismiss();
           this.presentSuccessToast();

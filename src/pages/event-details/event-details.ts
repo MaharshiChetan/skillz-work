@@ -22,12 +22,11 @@ export class EventDetailsPage {
     private socialSharing: SocialSharing
   ) {
     this.imageArray = [
-      { image: '../../assets/img/background/background-1.jpg' },
-      { image: '../../assets/img/background/background-2.jpg' },
-      { image: '../../assets/img/background/background-3.jpg' },
-      { image: '../../assets/img/background/background-4.jpg' },
-      { image: '../../assets/img/background/background-5.jpg' },
-      { image: '../../assets/img/background/background-6.jpg' },
+      { image: '../../assets/pods/pods1.jpg' },
+      { image: '../../assets/pods/pods2.jpg' },
+      { image: '../../assets/pods/pods3.jpg' },
+      { image: '../../assets/pods/pods4.jpg' },
+      { image: '../../assets/pods/pods5.jpg' },
     ];
   }
 

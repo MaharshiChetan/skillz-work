@@ -336,13 +336,13 @@ export class AuthProvider {
     });
   }
 
-  createUser(uid, name, username, displaypic) {
+  createUser(uid, name, username, displayPic) {
     return new Promise(resolve => {
       firebase
         .auth()
         .currentUser.updateProfile({
           displayName: name,
-          photoURL: displaypic,
+          photoURL: displayPic,
         })
         .then(res => {
           this.usersdata
@@ -351,7 +351,7 @@ export class AuthProvider {
               uid: firebase.auth().currentUser.uid,
               displayName: name,
               userName: username,
-              profilephoto: displaypic,
+              profilePhoto: displayPic,
             })
             .then(res => {
               resolve(true);

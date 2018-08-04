@@ -45,16 +45,12 @@ export class EventsPage {
 
   constructor(public navCtrl: NavController) {}
 
-  cardTapped(card) {
-    alert(card.title + ' was tapped.');
+  goToEventDetails() {
+    this.navCtrl.push('EventDetailsPage');
   }
 
   share(card) {
     alert(card.title + ' was shared.');
-  }
-
-  listen(card) {
-    alert('Listening to ' + card.title);
   }
 
   favorite(card) {

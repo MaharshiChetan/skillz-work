@@ -11,7 +11,7 @@
   </ion-refresher>
   <div class="card-profile" *ngIf="userDetails">
     <div class="card-profile_visual">
-      <img [src]="userDetails.profilephoto" style="opacity: 0.5;" height="100%"
+      <img [src]="userDetails.profilePhoto" style="opacity: 0.5;" height="100%"
         width="100%" />
     </div>
 
@@ -64,7 +64,7 @@
       <ion-card *ngFor="let post of posts">
         <ion-item>
           <ion-avatar item-start>
-            <img [src]="userDetails.profilephoto">
+            <img [src]="userDetails.profilePhoto">
           </ion-avatar>
           <h2 class="sticky">{{userDetails.userName}}</h2>
           <p>{{post.date}}</p>

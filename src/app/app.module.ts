@@ -16,6 +16,7 @@ import { Camera } from '@ionic-native/camera';
 import { CallNumber } from '@ionic-native/call-number';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
+import { EventsProvider } from '../providers/events/events';
 
 @NgModule({
   declarations: [MyApp],
@@ -41,6 +42,7 @@ import { InAppBrowser } from '@ionic-native/in-app-browser';
 
     AuthProvider,
     CameraProvider,
+    EventsProvider,
   ],
 })
 export class AppModule {}
