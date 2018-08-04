@@ -12,7 +12,7 @@ import { Storage } from '@ionic/storage';
   templateUrl: 'app.html',
 })
 export class MyApp {
-  rootPage: string = '';
+  rootPage: string = 'CreateEventPage';
   isAuthenticated = false;
 
   constructor(
@@ -36,7 +36,7 @@ export class MyApp {
         this.rootPage = 'LoginPage';
       }
     }); */
-    this.storage
+    /* this.storage
       .get('user')
       .then(val => {
         if (val) {
@@ -48,7 +48,7 @@ export class MyApp {
       .catch(err => {
         this.rootPage = 'LoginPage';
         console.error(err);
-      });
+      }); */
 
     //KEEPS CHECKING NETWORK CONNECTIVITY AND ALERTS USER IF DISCONNECTED
     this.network.onchange().subscribe(networkchange => {

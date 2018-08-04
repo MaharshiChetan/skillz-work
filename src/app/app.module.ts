@@ -24,7 +24,9 @@ import { EventsProvider } from '../providers/events/events';
     BrowserModule,
     HttpClientModule,
     IonicStorageModule.forRoot(),
-    IonicModule.forRoot(MyApp),
+    IonicModule.forRoot(MyApp, {
+      tabsHideOnSubPages: true,
+    }),
   ],
   bootstrap: [IonicApp],
   entryComponents: [MyApp],

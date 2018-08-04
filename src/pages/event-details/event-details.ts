@@ -1,10 +1,5 @@
 import { Component } from '@angular/core';
 import { NavController, IonicPage } from 'ionic-angular';
-import { CallNumber } from '@ionic-native/call-number';
-import { SocialSharing } from '@ionic-native/social-sharing';
-import { InAppBrowser } from '@ionic-native/in-app-browser';
-
-import { ContactModel } from './contact.model';
 
 @IonicPage()
 @Component({
@@ -12,54 +7,37 @@ import { ContactModel } from './contact.model';
   templateUrl: 'event-details.html',
 })
 export class EventDetailsPage {
-  contact: ContactModel = new ContactModel();
-  imageArray: any = [];
+  estateProperty = {
+    name: 'Pretty house',
+    description: `It’s a 2 bedroom, 2 bathroom laneway house that also has a spacious study off the upstairs landing.
+                  Sporting modern finishes and some cute touches like wall niches and bamboo accents,
+                  this laneway house is a great example of what can be built on most of Vancouver’s standard 33 x 122
+                  foot lots.`,
+    price: '200',
+    image: '../../assets/pods/pods5.jpg',
+    style: 'Modern Interior',
+    size: "33' Lot",
+    features: [
+      {
+        iosIcon: 'ios-call',
+        mdIcon: 'md-call',
+        title: 'Call',
+      },
+      {
+        iosIcon: 'ios-mail',
+        mdIcon: 'md-mail',
+        title: 'Message',
+      },
+      {
+        iosIcon: 'ios-globe',
+        mdIcon: 'md-globe',
+        title: 'Visit Website',
+      },
+    ],
+  };
 
-  constructor(
-    private navCtrl: NavController,
-    private callNumber: CallNumber,
-    private inAppBrowser: InAppBrowser,
-    private socialSharing: SocialSharing
-  ) {
-    this.imageArray = [
-      { image: '../../assets/pods/pods1.jpg' },
-      { image: '../../assets/pods/pods2.jpg' },
-      { image: '../../assets/pods/pods3.jpg' },
-      { image: '../../assets/pods/pods4.jpg' },
-      { image: '../../assets/pods/pods5.jpg' },
-    ];
-  }
-
-  call(number: string) {
-    this.callNumber
-      .callNumber(number, true)
-      .then(() => console.log('Launched dialer!'))
-      .catch(() => console.log('Error launching dialer'));
-  }
-
-  sendMail(email: string) {
-    this.socialSharing
-      .canShareViaEmail()
-      .then(() => {
-        this.socialSharing
-          .shareViaEmail(
-            "Hello, I'm trying this fantastic app that will save me hours of development.",
-            'This app is the best!',
-            [email]
-          )
-          .then(() => {
-            console.log('Success!');
-          })
-          .catch(() => {
-            console.log('Error');
-          });
-      })
-      .catch(() => {
-        console.log('Sharing via email is not possible');
-      });
-  }
-
-  openInAppBrowser(website: string) {
-    this.inAppBrowser.create(website, '_blank', 'location=yes');
+  constructor(public navCtrl: NavController) {}
+  iconClick(feature) {
+    console.log(feature);
   }
 }

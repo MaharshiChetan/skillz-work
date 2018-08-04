@@ -75,6 +75,7 @@ export class ProfilePage {
     if (refresher != null) {
       this.authService.getUserDetails().then(user => {
         this.userDetails = user;
+        console.log(this.userDetails);
         refresher.complete();
       });
     } else {
