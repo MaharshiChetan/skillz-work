@@ -1,52 +1,68 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons>
-    </ion-buttons>
-    <ion-title>New Event</ion-title>
-  </ion-toolbar>
+  <ion-navbar>
+    <ion-title>Create Event</ion-title>
+  </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  <ion-item>
-    <ion-label>Event Date</ion-label>
-    <ion-datetime #eventDate displayFormat="D MMM, YY" pickerFormat="DD MMM YYYY"
-      min="2017" max="2020-12-31">
-    </ion-datetime>
-  </ion-item>
-  <ion-row>
-    <ion-col col-8>
+<ion-content text-center>
+  <form [formGroup]="eventForm" (ngSubmit)="submitForm(myInput)">
+    <ion-list>
+
       <ion-item>
-        <ion-label stacked>Name</ion-label>
-        <ion-input [(ngModel)]="guestName" type="text" placeholder="What's your guest's name?"></ion-input>
+        <ion-label floating>Event Name (Title)</ion-label>
+        <ion-input name="eventName" formControlName="eventName"></ion-input>
       </ion-item>
-    </ion-col>
+      <ion-item>
+        <ion-label floating>Description of Event</ion-label>
+        <ion-textarea #myInput id="myInput" rows="1" maxLength="500"
+          (keyup)="adjust()" name="eventDescription" fromControlName="eventDescription"></ion-textarea>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Location</ion-label>
+        <ion-input name="eventLocation" formControlName="eventLocation"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>
+          <ion-icon name="cash"></ion-icon>
+          Amount in Rupees
+        </ion-label>
+        <ion-input type="number" name="eventPrice" formControlName="eventPrice"></ion-input>
+      </ion-item>
+    </ion-list>
 
-    <ion-col col-4>
-      <button ion-button icon-only (click)="takePicture()">
+    <ion-list>
+      <ion-item>
+        <ion-label>Start Date</ion-label>
+        <ion-datetime displayFormat="MMM DD YYYY" name="startDate" formControlName="startDate"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label>End Date</ion-label>
+        <ion-datetime displayFormat="MMM DD YYYY" name="endDate" formControlName="endDate"></ion-datetime>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Start Time</ion-label>
+        <ion-datetime displayFormat="h:mm A" pickerFormat="h mm A" name="startTime"
+          formControlName="startTime"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label>End Time</ion-label>
+        <ion-datetime displayFormat="h:mm A" pickerFormat="h mm A" name="endTime"
+          formControlName="endTime"></ion-datetime>
+      </ion-item>
+
+      <img *ngIf="chosenPicture" [src]="chosenPicture" />
+      <button type="button" ion-button icon-start (click)="uploadPicture()">
         <ion-icon name="camera"></ion-icon>
+        {{ imageChoice }}
       </button>
-    </ion-col>
-  </ion-row>
-  <span *ngIf="guestPicture">Picture taken!</span>
-  <ion-item>
-    <ion-label stacked>Event Name</ion-label>
-    <ion-input [(ngModel)]="eventName" type="text" placeholder="What's your event's name?">
-    </ion-input>
-  </ion-item>
 
-  <ion-item>
-    <ion-label stacked>Price</ion-label>
-    <ion-input [(ngModel)]="eventPrice" type="number" placeholder="How much will guests pay?">
-    </ion-input>
-  </ion-item>
+      <div padding>
+        <button type="submit" block ion-button block [disabled]="!eventForm.valid">
+          Create Event
+        </button>
+      </div>
 
-  <ion-item>
-    <ion-label stacked>Cost</ion-label>
-    <ion-input [(ngModel)]="eventCost" type="number" placeholder="How much are you spending?">
-    </ion-input>
-  </ion-item>
-
-  <button block ion-button expand="block" (click)="createEvent(eventName, eventDate.value, eventPrice, eventCost)">
-    Create Event
-  </button>
+    </ion-list>
+  </form>
 </ion-content>

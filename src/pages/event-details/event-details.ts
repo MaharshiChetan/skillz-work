@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, IonicPage } from 'ionic-angular';
+import { NavController, IonicPage, NavParams } from 'ionic-angular';
 
 @IonicPage()
 @Component({
@@ -8,11 +8,6 @@ import { NavController, IonicPage } from 'ionic-angular';
 })
 export class EventDetailsPage {
   estateProperty = {
-    name: 'Pretty house',
-    description: `It’s a 2 bedroom, 2 bathroom laneway house that also has a spacious study off the upstairs landing.
-                  Sporting modern finishes and some cute touches like wall niches and bamboo accents,
-                  this laneway house is a great example of what can be built on most of Vancouver’s standard 33 x 122
-                  foot lots.`,
     price: '200',
     image: '../../assets/pods/pods5.jpg',
     style: 'Modern Interior',
@@ -35,8 +30,11 @@ export class EventDetailsPage {
       },
     ],
   };
-
-  constructor(public navCtrl: NavController) {}
+  event;
+  constructor(private navCtrl: NavController, private navParams: NavParams) {
+    this.event = this.navParams.get('event');
+    console.log(this.event);
+  }
   iconClick(feature) {
     console.log(feature);
   }

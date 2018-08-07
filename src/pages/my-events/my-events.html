@@ -3,12 +3,12 @@
     <button ion-button icon-only menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Upcoming Events</ion-title>
+    <ion-title>My Events</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
-  <ion-refresher (ionRefresh)="fetchEvents($event)">
+  <ion-refresher (ionRefresh)="getMyEvents($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
   <ion-list>
@@ -19,7 +19,7 @@
       <h2>{{ e.eventName }}</h2>
       <p>{{ e.eventLocation }}</p>
       <p>{{ e.startDate }} {{ e.startTime }}AM</p>
-      <button ion-button clear item-end (click)="goToEventDetails(e)">View</button>
+      <button ion-button clear item-end (click)="goToCreateEvent(e)">Edit</button>
     </ion-item>
   </ion-list>
 </ion-content>

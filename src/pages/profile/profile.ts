@@ -67,12 +67,12 @@ export class ProfilePage {
     private modalCtrl: ModalController
   ) {}
 
-  ionViewWillEnter() {
+  ionViewDidLoad() {
     this.fetchUserProfile(null);
   }
 
   fetchUserProfile(refresher) {
-    if (refresher != null) {
+    if (refresher) {
       this.authService.getUserDetails().then(user => {
         this.userDetails = user;
         console.log(this.userDetails);

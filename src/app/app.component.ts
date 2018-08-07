@@ -1,5 +1,10 @@
-import { Component } from '@angular/core';
-import { Platform, ToastController } from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
+import {
+  Platform,
+  ToastController,
+  NavController,
+  MenuController,
+} from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
@@ -12,8 +17,9 @@ import { Storage } from '@ionic/storage';
   templateUrl: 'app.html',
 })
 export class MyApp {
-  rootPage: string = 'CreateEventPage';
+  rootPage: string = '';
   isAuthenticated = false;
+  @ViewChild('nav') nav: NavController;
 
   constructor(
     public platform: Platform,
@@ -21,7 +27,8 @@ export class MyApp {
     public splashScreen: SplashScreen,
     public storage: Storage,
     public network: Network,
-    public toastCtrl: ToastController
+    public toastCtrl: ToastController,
+    public menuCtrl: MenuController
   ) {
     //INITIALIZES FIREBASE WITH THE APP
     firebase.initializeApp(config);
@@ -36,7 +43,7 @@ export class MyApp {
         this.rootPage = 'LoginPage';
       }
     }); */
-    /* this.storage
+    this.storage
       .get('user')
       .then(val => {
         if (val) {
@@ -48,7 +55,7 @@ export class MyApp {
       .catch(err => {
         this.rootPage = 'LoginPage';
         console.error(err);
-      }); */
+      });
 
     //KEEPS CHECKING NETWORK CONNECTIVITY AND ALERTS USER IF DISCONNECTED
     this.network.onchange().subscribe(networkchange => {
@@ -79,5 +86,20 @@ export class MyApp {
       statusBar.styleDefault();
       splashScreen.hide();
     });
+  }
+
+  onLogout() {
+    this.storage.remove('user');
+    this.nav.setRoot('LoginPage');
+    this.menuCtrl.close();
+  }
+  goToCreateEvent() {
+    this.nav.push('CreateEventPage');
+    this.menuCtrl.close();
+  }
+
+  goToMyEvents() {
+    this.nav.push('MyEventsPage');
+    this.menuCtrl.close();
   }
 }

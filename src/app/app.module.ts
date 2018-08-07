@@ -17,6 +17,7 @@ import { CallNumber } from '@ionic-native/call-number';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { EventsProvider } from '../providers/events/events';
+import { SettingsPage } from '../pages/settings/settings';
 
 @NgModule({
   declarations: [MyApp],

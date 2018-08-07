@@ -1,0 +1,10 @@
+//Event Photo
+//Event Name
+//Location
+//Start Date
+//End Date
+//Start Time (UTC+05:30)
+//End Time (UTC+05:30)
+//Description
+Reviews
+uid

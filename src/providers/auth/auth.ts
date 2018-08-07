@@ -171,8 +171,6 @@ export class AuthProvider {
             .signInWithCredential(googleCredential)
             .then(response => {
               let userdata = JSON.parse(JSON.stringify(response));
-
-              alert(userdata.displayName);
               this.createUser(
                 userdata.uid,
                 userdata.displayName,
@@ -180,7 +178,6 @@ export class AuthProvider {
                 userdata.photoURL
               )
                 .then(res => {
-                  alert('res');
                   if (res === true) {
                     this.setLoginKey(userdata.uid)
                       .then(res => {
@@ -236,7 +233,6 @@ export class AuthProvider {
       this.facebook
         .login(['public_profile', 'user_friends', 'email'])
         .then(response => {
-          alert(response);
           const facebookCredential = firebase.auth.FacebookAuthProvider.credential(
             response.authResponse.accessToken
           );
@@ -244,7 +240,6 @@ export class AuthProvider {
             .auth()
             .signInWithCredential(facebookCredential)
             .then(response => {
-              alert(response);
               let userdata = JSON.parse(JSON.stringify(response));
               this.createUser(
                 userdata.uid,
@@ -253,7 +248,6 @@ export class AuthProvider {
                 userdata.photoURL
               )
                 .then(res => {
-                  alert('res');
                   if (res === true) {
                     this.setLoginKey(userdata.uid)
                       .then(res => {
@@ -319,7 +313,7 @@ export class AuthProvider {
   }
 
   logout() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       firebase
         .auth()
         .signOut()

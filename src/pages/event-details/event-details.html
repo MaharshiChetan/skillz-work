@@ -1,32 +1,32 @@
 <ion-header no-border>
   <ion-navbar>
     <ion-title>
-      Event-Details
+      {{ event.eventName }}
     </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content fullscreen elestic-header>
-  <section class="housing-image" [ngStyle]="{ 'background-image': 'url(' + estateProperty.image + ')'}">
+  <section class="housing-image" [ngStyle]="{ 'background-image': 'url(' + event.eventImage + ')'}">
     <section class="housing-banner" padding>
-      <span class="housing-title">{{estateProperty.name}}</span>
-      <span class="price">{{estateProperty.price | currency: 'INR':true }}</span>
+      <span class="housing-title">{{event.eventName}}</span>
+      <span class="price">{{event.eventPrice | currency: 'INR':true }}</span>
     </section>
   </section>
   <section class="main-content">
     <ion-grid class="main-features">
       <ion-row>
-        <ion-col text-center *ngFor="let feature of estateProperty.features">
+        <ion-col text-center *ngFor="let feature of event.features">
           <ion-icon (click)="iconClick(feature)" [ios]="feature.iosIcon"
             [md]="feature.mdIcon"></ion-icon>
-          <span class="item-block">{{feature.title}}</span>
+          <span class="item-block">{{event.title}}</span>
         </ion-col>
       </ion-row>
     </ion-grid>
     <ion-grid class="listing-details">
       <ion-row>
         <p margin-left margin-right no-margin-top style="text-align: justify">
-          {{estateProperty.description}}
+          {{event.eventDescription}}
         </p>
       </ion-row>
       <ion-row>
@@ -34,7 +34,7 @@
           <ion-icon name="home"></ion-icon>{{estateProperty.style}}
         </ion-col>
         <ion-col>
-          <ion-icon name="pin"></ion-icon>{{estateProperty.size}}
+          <ion-icon name="pin"></ion-icon>{{event.eventLocation}}
         </ion-col>
       </ion-row>
       <ion-row *ngFor="let a of [1,1]">
