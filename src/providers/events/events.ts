@@ -19,8 +19,8 @@ export class EventsProvider {
     eventImage,
     eventNumber?: any
   ) {
-    return new Promise(resolve => {
-      if (eventNumber) {
+    if (eventNumber) {
+      return new Promise(resolve => {
         this.eventData
           .child(`/${eventNumber}`)
           .set({
@@ -43,9 +43,10 @@ export class EventsProvider {
             console.error(err);
             resolve(false);
           });
-      } else {
+      });
+    } else {
+      return new Promise(resolve => {
         this.fetchLastEvent().then(lastEvent => {
-          console.log(lastEvent);
           this.eventData
             .child(`/${lastEvent}`)
             .set({
@@ -69,8 +70,8 @@ export class EventsProvider {
               resolve(false);
             });
         });
-      }
-    });
+      });
+    }
   }
 
   fetchLastEvent() {
@@ -78,7 +79,7 @@ export class EventsProvider {
       this.eventData
         .once('value', snapshot => {
           if (!snapshot.val()) {
-            resolve(0);
+            resolve(1);
           } else {
             resolve(snapshot.val().length);
           }

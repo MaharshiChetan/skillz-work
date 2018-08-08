@@ -132,7 +132,7 @@ export class CreateEventPage {
     const loading = this.loadingCtrl.create();
 
     loading.present();
-    return this.cameraService.getPictureFromCamera().then(
+    return this.cameraService.getPictureFromCamera(false).then(
       picture => {
         if (picture) {
           this.chosenPicture = picture;
@@ -152,7 +152,7 @@ export class CreateEventPage {
     const loading = this.loadingCtrl.create();
 
     loading.present();
-    return this.cameraService.getPictureFromPhotoLibrary().then(
+    return this.cameraService.getPictureFromPhotoLibrary(false).then(
       picture => {
         if (picture) {
           this.chosenPicture = picture;
@@ -231,11 +231,11 @@ export class CreateEventPage {
     loader.present();
 
     const uid = this.authService.getActiveUser().uid;
+    const imageStore = firebase
+      .storage()
+      .ref('/eventImages')
+      .child(uid);
     if (this.chosenPicture && eventNumber) {
-      const imageStore = firebase
-        .storage()
-        .ref('/eventImages')
-        .child(uid);
       imageStore.putString(this.chosenPicture, 'data_url').then(res => {
         imageStore.getDownloadURL().then(url => {
           this.imageUrl = url;
@@ -249,7 +249,7 @@ export class CreateEventPage {
               endDate,
               startTime,
               endTime,
-              url,
+              this.imageUrl,
               eventNumber
             )
             .then(res => {
@@ -263,51 +263,33 @@ export class CreateEventPage {
             });
         });
       });
-    } else if (eventNumber) {
-      this.eventService
-        .createEvent(
-          eventName,
-          eventDescription,
-          eventLocation,
-          eventPrice,
-          startDate,
-          endDate,
-          startTime,
-          endTime,
-          this.imageUrl,
-          eventNumber
-        )
-        .then(res => {
-          loader.dismiss();
-          this.presentSuccessToast();
-          this.navCtrl.popToRoot();
-        })
-        .catch(e => {
-          loader.dismiss();
-          this.presentFailToast();
-        });
     } else {
-      this.eventService
-        .createEvent(
-          eventName,
-          eventDescription,
-          eventLocation,
-          eventPrice,
-          startDate,
-          endDate,
-          startTime,
-          endTime,
-          this.imageUrl
-        )
-        .then(res => {
-          loader.dismiss();
-          this.presentSuccessToast();
-          this.navCtrl.popToRoot();
-        })
-        .catch(e => {
-          loader.dismiss();
-          this.presentFailToast();
+      imageStore.putString(this.chosenPicture, 'data_url').then(res => {
+        imageStore.getDownloadURL().then(url => {
+          this.imageUrl = url;
+          this.eventService
+            .createEvent(
+              eventName,
+              eventDescription,
+              eventLocation,
+              eventPrice,
+              startDate,
+              endDate,
+              startTime,
+              endTime,
+              this.imageUrl
+            )
+            .then(res => {
+              loader.dismiss();
+              this.presentSuccessToast();
+              this.navCtrl.popToRoot();
+            })
+            .catch(e => {
+              loader.dismiss();
+              this.presentFailToast();
+            });
         });
+      });
     }
   }
 

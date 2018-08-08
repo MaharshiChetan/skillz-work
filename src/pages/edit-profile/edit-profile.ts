@@ -131,7 +131,7 @@ export class EditProfilePage {
     const loading = this.loadingCtrl.create();
 
     loading.present();
-    return this.cameraService.getPictureFromCamera().then(
+    return this.cameraService.getPictureFromCamera(true).then(
       picture => {
         if (picture) {
           this.chosenPicture = picture;
@@ -148,7 +148,7 @@ export class EditProfilePage {
     const loading = this.loadingCtrl.create();
 
     loading.present();
-    return this.cameraService.getPictureFromPhotoLibrary().then(
+    return this.cameraService.getPictureFromPhotoLibrary(true).then(
       picture => {
         if (picture) {
           this.chosenPicture = picture;

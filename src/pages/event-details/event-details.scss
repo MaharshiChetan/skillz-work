@@ -5,6 +5,11 @@ event-details-page {
   $content-color: whitesmoke;
   $detail-background: rgba(236, 236, 236, 0.8);
 
+  .center {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+  }
   /* Header */
   .toolbar-background {
     border-color: transparent;

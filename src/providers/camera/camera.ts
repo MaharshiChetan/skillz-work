@@ -5,12 +5,12 @@ import { Camera } from '@ionic-native/camera';
 export class CameraProvider {
   constructor(private camera: Camera) {}
 
-  getPictureFromCamera() {
-    return this.getImage(this.camera.PictureSourceType.CAMERA, true);
+  getPictureFromCamera(crop) {
+    return this.getImage(this.camera.PictureSourceType.CAMERA, crop);
   }
 
-  getPictureFromPhotoLibrary() {
-    return this.getImage(this.camera.PictureSourceType.PHOTOLIBRARY);
+  getPictureFromPhotoLibrary(crop) {
+    return this.getImage(this.camera.PictureSourceType.PHOTOLIBRARY, crop);
   }
 
   // This method takes optional parameters to make it more customizable
