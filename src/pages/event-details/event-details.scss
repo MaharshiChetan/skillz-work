@@ -7,7 +7,6 @@ event-details-page {
 
   .center {
     width: 100%;
-    max-width: 400px;
     height: auto;
   }
   /* Header */
@@ -24,7 +23,7 @@ event-details-page {
   /* Image */
   .housing-image {
     background-size: cover;
-    height: 50vh;
+    height: auto;
     width: 100%;
     position: relative;
   }

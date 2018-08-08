@@ -26,6 +26,7 @@ export class CreateEventPage {
   eventForm: FormGroup;
   imageUrl: string;
   eventData: any;
+  des = 'this is event';
 
   @HostListener('document:keydown.enter', ['$event'])
   onKeydownHandler(evt: KeyboardEvent) {
@@ -56,6 +57,9 @@ export class CreateEventPage {
   ) {
     this.eventData = this.navParams.get('eventData');
     this.createForm();
+    if (this.chosenPicture) {
+      this.imageChoice = 'Change Image';
+    }
   }
 
   createForm() {
@@ -136,9 +140,6 @@ export class CreateEventPage {
       picture => {
         if (picture) {
           this.chosenPicture = picture;
-          if (this.chosenPicture) {
-            this.imageChoice = 'Change Image';
-          }
         }
         loading.dismiss();
       },
@@ -156,9 +157,6 @@ export class CreateEventPage {
       picture => {
         if (picture) {
           this.chosenPicture = picture;
-          if (this.chosenPicture) {
-            this.imageChoice = 'Change Image';
-          }
         }
         loading.dismiss();
       },
@@ -227,6 +225,17 @@ export class CreateEventPage {
     endTime,
     eventNumber?: any
   ) {
+    if (!(this.chosenPicture || this.eventData)) {
+      this.toastCtrl
+        .create({
+          message: 'Please upload event image, Its mandatory!',
+          position: 'top',
+          duration: 2000,
+          cssClass: 'fail-toast',
+        })
+        .present();
+      return;
+    }
     const loader = this.loadingCtrl.create();
     loader.present();
 
@@ -263,6 +272,29 @@ export class CreateEventPage {
             });
         });
       });
+    } else if (this.eventData) {
+      this.eventService
+        .createEvent(
+          eventName,
+          eventDescription,
+          eventLocation,
+          eventPrice,
+          startDate,
+          endDate,
+          startTime,
+          endTime,
+          this.eventData.eventImage || this.chosenPicture,
+          eventNumber
+        )
+        .then(res => {
+          loader.dismiss();
+          this.presentSuccessToast();
+          this.navCtrl.popToRoot();
+        })
+        .catch(e => {
+          loader.dismiss();
+          this.presentFailToast();
+        });
     } else {
       imageStore.putString(this.chosenPicture, 'data_url').then(res => {
         imageStore.getDownloadURL().then(url => {

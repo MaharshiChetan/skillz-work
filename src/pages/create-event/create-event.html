@@ -14,9 +14,10 @@
       </ion-item>
       <ion-item>
         <ion-label floating>Description of Event</ion-label>
-        <ion-textarea #myInput id="myInput" rows="1" maxLength="500"
-          (keyup)="adjust()" name="eventDescription" fromControlName="eventDescription"></ion-textarea>
+        <ion-textarea #myInput [value]="eventData?.eventDescription"
+          id="myInput" rows="1" maxLength="500" (keyup)="adjust()"></ion-textarea>
       </ion-item>
+
       <ion-item>
         <ion-label floating>Location</ion-label>
         <ion-input name="eventLocation" formControlName="eventLocation"></ion-input>
@@ -51,7 +52,8 @@
           formControlName="endTime"></ion-datetime>
       </ion-item>
 
-      <img *ngIf="chosenPicture" [src]="chosenPicture" />
+      <img *ngIf="chosenPicture || eventData?.eventImage" [src]="chosenPicture || eventData?.eventImage"
+      />
       <button type="button" ion-button icon-start (click)="uploadPicture()">
         <ion-icon name="camera"></ion-icon>
         {{ imageChoice }}

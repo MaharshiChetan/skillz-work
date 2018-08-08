@@ -7,7 +7,8 @@
 </ion-header>
 
 <ion-content fullscreen elestic-header>
-  <section class="housing-image" [ngStyle]="{ 'background-image': 'url(' + event.eventImage + ')'}">
+  <section class="housing-image">
+    <img class="center" [src]="event.eventImage" alt="">
     <section class="housing-banner" padding>
       <span class="housing-title">{{event.eventName}}</span>
       <span class="price">{{event.eventPrice | currency: 'INR':true }}</span>
