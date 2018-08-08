@@ -112,7 +112,7 @@ export class AuthProvider {
           let userdata = JSON.parse(JSON.stringify(response));
 
           if (userdata.user.emailVerified === true) {
-            this.setLoginKey(userdata.uid)
+            this.setLoginKey(userdata.user.uid)
               .then(res => {
                 console.log(res);
                 resolve(true);
@@ -136,10 +136,31 @@ export class AuthProvider {
     });
   }
 
+  webGoogleLogin(): Promise<boolean> {
+    return new Promise(resolve => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase
+        .auth()
+        .signInWithPopup(provider)
+        .then(res => {
+          console.log(res);
+          resolve(true);
+        })
+        .catch(err => {
+          resolve(false);
+          console.error(err);
+        });
+    });
+  }
+
   registerWithGoogle() {
     return new Promise(resolve => {
       this.googlePlus
-        .login({})
+        .login({
+          webClientId:
+            '766344988044-rq4ldcpfb22dggipn58a03te59nhen25.apps.googleusercontent.com',
+          offline: true,
+        })
         .then(res => {
           const googleCredential = firebase.auth.GoogleAuthProvider.credential(
             null,
@@ -153,7 +174,7 @@ export class AuthProvider {
               this.createUser(
                 userdata.uid,
                 userdata.displayName,
-                'NOUSERNAME',
+                userdata.email.substring(0, userdata.email.lastIndexOf('@')),
                 userdata.photoURL
               )
                 .then(res => {
@@ -292,13 +313,7 @@ export class AuthProvider {
   }
 
   logout() {
-    return new Promise(resolve => {
-      this.googlePlus.logout().catch(err => {
-        console.error(err);
-      });
-      this.facebook.logout().catch(err => {
-        console.error(err);
-      });
+    return new Promise((resolve, reject) => {
       firebase
         .auth()
         .signOut()
@@ -306,16 +321,22 @@ export class AuthProvider {
           console.error(err);
         });
       this.storage.remove('user');
+      this.googlePlus.logout().catch(err => {
+        console.error(err);
+      });
+      this.facebook.logout().catch(err => {
+        console.error(err);
+      });
     });
   }
 
-  createUser(uid, name, username, displaypic) {
+  createUser(uid, name, username, displayPic) {
     return new Promise(resolve => {
       firebase
         .auth()
         .currentUser.updateProfile({
           displayName: name,
-          photoURL: displaypic,
+          photoURL: displayPic,
         })
         .then(res => {
           this.usersdata
@@ -324,7 +345,7 @@ export class AuthProvider {
               uid: firebase.auth().currentUser.uid,
               displayName: name,
               userName: username,
-              profilephoto: displaypic,
+              profilePhoto: displayPic,
             })
             .then(res => {
               resolve(true);
@@ -374,5 +395,9 @@ export class AuthProvider {
           console.error(err);
         });
     });
+  }
+
+  getActiveUser() {
+    return firebase.auth().currentUser;
   }
 }

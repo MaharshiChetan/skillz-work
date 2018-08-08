@@ -1,4 +1,4 @@
-// import { FormBuilder, FormControl, Validator } from '@angular/forms';
+import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { Component } from '@angular/core';
 import {
   LoadingController,
@@ -14,30 +14,38 @@ import { AuthProvider } from '../../providers/auth/auth';
   templateUrl: 'login.html',
 })
 export class LoginPage {
-  public loginForm: any;
+  login: FormGroup;
   email: any;
   password: any;
-
   constructor(
     private loadingCtrl: LoadingController,
     private navCtrl: NavController,
     private toastCtrl: ToastController,
     private authService: AuthProvider
-  ) {}
+  ) {
+    this.createForm();
+  }
+
+  createForm() {
+    this.login = new FormGroup({
+      email: new FormControl('', Validators.required),
+      password: new FormControl('', Validators.required),
+    });
+  }
 
   loginWithEmail() {
-    var loader = this.loadingCtrl.create({
+    const loader = this.loadingCtrl.create({
       spinner: 'dots',
       content: 'Logging In',
     });
     loader.present();
     this.authService
-      .loginwithEmail(this.email, this.password)
+      .loginwithEmail(this.email.trim(), this.password)
       .then(res => {
         loader.dismiss();
         console.log(res);
         if (res === true) {
-          this.navCtrl.setRoot('ProfilePage');
+          this.navCtrl.setRoot('TabsPage');
         } else if (res === 'verify') {
           this.toastCtrl
             .create({
@@ -81,8 +89,30 @@ export class LoginPage {
       });
   }
 
+  // doGoogleLogout(){
+  //   let env = this;
+
+  //   this.googleLoginService.doGoogleLogout()
+  //   .then(function(res) {
+  //     env.user = new GoogleUserModel();
+  //   }, function(error){
+  //     console.log("Google logout error", error);
+  //   });
+  // }
+
+  // doGoogleLogin() {
+  //   let env = this;
+
+  //   this.googleLoginService.doGoogleLogin()
+  //   .then(function(user){
+  //     env.user = user;
+  //   }, function(err){
+  //     console.log("Google Login error", err);
+  //   });
+  // }
+
   googleLogin() {
-    var loader = this.loadingCtrl.create({
+    const loader = this.loadingCtrl.create({
       spinner: 'dots',
       content: 'Logging In',
     });
@@ -90,6 +120,7 @@ export class LoginPage {
     this.authService
       .registerWithGoogle()
       .then(res => {
+        alert(res);
         if (res === true) {
           loader.dismiss();
           this.navCtrl.setRoot('TabsPage');
@@ -130,7 +161,7 @@ export class LoginPage {
   }
 
   facebookLogin() {
-    var loader = this.loadingCtrl.create({
+    const loader = this.loadingCtrl.create({
       spinner: 'dots',
       content: 'Logging In',
     });

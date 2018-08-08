@@ -1,29 +1,30 @@
 <ion-content padding class="transparent-header">
-  <ion-header>
-    <ion-navbar>
-    </ion-navbar>
-  </ion-header>
   <img class="logo" src="assets/imgs/logo/hip-hop-2.png" />
   <div padding>
-    <ion-item>
-      <ion-input type="email" placeholder="Email" [(ngModel)]="email"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-input type="password" placeholder="Password" [(ngModel)]="password"></ion-input>
-    </ion-item>
-    <button ion-button block outline (click)="loginWithEmail()" color="light"
-      class="login-button">Login</button>
+    <form [formGroup]="login" (ngSubmit)="loginWithEmail()">
+      <ion-item>
+        <ion-input type="email" placeholder="Email" [(ngModel)]="email"
+          formControlName="email"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input type="password" placeholder="Password" [(ngModel)]="password"
+          formControlName="password"></ion-input>
+      </ion-item>
+      <button type="submit" ion-button block outline color="light"
+        class="login-button" [disabled]="!login.valid">Login</button>
+    </form>
   </div>
   <div class="strike">
     <span>OR</span>
   </div>
-  <button ion-button block clear (click)="login()" color="light"
+  <button ion-button block clear (click)="facebookLogin()" color="light"
     class="login-button">
     <ion-icon name="logo-facebook"></ion-icon> Login with Facebook</button>
-  <button ion-button block clear (click)="login()" color="light"
+  <button ion-button block clear (click)="googleLogin()" color="light"
     class="login-button">
     <ion-icon name="logo-google"></ion-icon> Login with Google</button>
 </ion-content>
+
 <ion-footer>
   <ion-toolbar class="footer">
     <div (click)="goToSignup()">

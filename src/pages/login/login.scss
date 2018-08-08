@@ -24,19 +24,21 @@ login-page {
     text-align: center;
     background: rgba(255, 255, 255, 0.06);
     min-height: 47px;
+    position: fixed;
   }
   .footer-md::before {
     border-top: 1px solid $transparent-white;
     background-image: none;
+    position: fixed;
   }
   // Fullscreen animated rainbow gradient
+  // #1de840,
+  // #1ddde8,
   ion-content {
     background: linear-gradient(
       316deg,
       #ff2400,
       #e81d1d,
-      #1de840,
-      #1ddde8,
       #2b1de8,
       #dd00f3,
       #dd00f3
@@ -57,9 +59,9 @@ login-page {
   }
   // Content
   // .scroll-content {
-  //   display: flex;
-  //   flex-direction: column;
-  //   overflow: hidden;
+  // display: flex;
+  // flex-direction: column;
+  // overflow: hidden;
   // }
   .logo {
     width: 50%;

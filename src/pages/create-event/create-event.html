@@ -1,0 +1,70 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Create Event</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content text-center>
+  <form [formGroup]="eventForm" (ngSubmit)="submitForm(myInput)">
+    <ion-list>
+
+      <ion-item>
+        <ion-label floating>Event Name (Title)</ion-label>
+        <ion-input name="eventName" formControlName="eventName"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Description of Event</ion-label>
+        <ion-textarea #myInput [value]="eventData?.eventDescription"
+          id="myInput" rows="1" maxLength="500" (keyup)="adjust()"></ion-textarea>
+      </ion-item>
+
+      <ion-item>
+        <ion-label floating>Location</ion-label>
+        <ion-input name="eventLocation" formControlName="eventLocation"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>
+          <ion-icon name="cash"></ion-icon>
+          Amount in Rupees
+        </ion-label>
+        <ion-input type="number" name="eventPrice" formControlName="eventPrice"></ion-input>
+      </ion-item>
+    </ion-list>
+
+    <ion-list>
+      <ion-item>
+        <ion-label>Start Date</ion-label>
+        <ion-datetime displayFormat="MMM DD YYYY" name="startDate" formControlName="startDate"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label>End Date</ion-label>
+        <ion-datetime displayFormat="MMM DD YYYY" name="endDate" formControlName="endDate"></ion-datetime>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Start Time</ion-label>
+        <ion-datetime displayFormat="h:mm A" pickerFormat="h mm A" name="startTime"
+          formControlName="startTime"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label>End Time</ion-label>
+        <ion-datetime displayFormat="h:mm A" pickerFormat="h mm A" name="endTime"
+          formControlName="endTime"></ion-datetime>
+      </ion-item>
+
+      <img *ngIf="chosenPicture || eventData?.eventImage" [src]="chosenPicture || eventData?.eventImage"
+      />
+      <button type="button" ion-button icon-start (click)="uploadPicture()">
+        <ion-icon name="camera"></ion-icon>
+        {{ imageChoice }}
+      </button>
+
+      <div padding>
+        <button type="submit" block ion-button block [disabled]="!eventForm.valid">
+          Create Event
+        </button>
+      </div>
+
+    </ion-list>
+  </form>
+</ion-content>

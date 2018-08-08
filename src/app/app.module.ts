@@ -11,6 +11,13 @@ import { GooglePlus } from '@ionic-native/google-plus';
 import { Facebook } from '@ionic-native/facebook';
 import { IonicStorageModule } from '@ionic/storage';
 import { Network } from '@ionic-native/network';
+import { CameraProvider } from '../providers/camera/camera';
+import { Camera } from '@ionic-native/camera';
+import { CallNumber } from '@ionic-native/call-number';
+import { SocialSharing } from '@ionic-native/social-sharing';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
+import { EventsProvider } from '../providers/events/events';
+import { SettingsPage } from '../pages/settings/settings';
 
 @NgModule({
   declarations: [MyApp],
@@ -18,7 +25,9 @@ import { Network } from '@ionic-native/network';
     BrowserModule,
     HttpClientModule,
     IonicStorageModule.forRoot(),
-    IonicModule.forRoot(MyApp),
+    IonicModule.forRoot(MyApp, {
+      tabsHideOnSubPages: true,
+    }),
   ],
   bootstrap: [IonicApp],
   entryComponents: [MyApp],
@@ -26,10 +35,17 @@ import { Network } from '@ionic-native/network';
     StatusBar,
     SplashScreen,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
-    AuthProvider,
     GooglePlus,
     Facebook,
     Network,
+    Camera,
+    CallNumber,
+    SocialSharing,
+    InAppBrowser,
+
+    AuthProvider,
+    CameraProvider,
+    EventsProvider,
   ],
 })
 export class AppModule {}
