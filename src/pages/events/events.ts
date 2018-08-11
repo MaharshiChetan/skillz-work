@@ -1,10 +1,5 @@
 import { Component } from '@angular/core';
-import {
-  NavController,
-  IonicPage,
-  LoadingController,
-  AlertController,
-} from 'ionic-angular';
+import { NavController, IonicPage, AlertController } from 'ionic-angular';
 import { EventsProvider } from '../../providers/events/events';
 
 @IonicPage()
@@ -17,7 +12,6 @@ export class EventsPage {
   constructor(
     public navCtrl: NavController,
     private eventService: EventsProvider,
-    private loadingCtrl: LoadingController,
     private alertCtrl: AlertController
   ) {}
 
@@ -32,20 +26,16 @@ export class EventsPage {
         refresher.complete();
       });
     } else {
-      const loader = this.loadingCtrl.create();
-      loader.present();
       this.eventService.fetchEvent().then(events => {
         this.events = events;
+        console.log(this.events);
         if (this.events.length <= 0) {
-          loader.dismiss();
           const alert = this.alertCtrl.create({
             title: 'Error!',
             subTitle: 'There are no events right now!',
             buttons: ['OK'],
           });
           alert.present();
-        } else {
-          loader.dismiss();
         }
       });
     }

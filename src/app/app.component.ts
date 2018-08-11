@@ -19,7 +19,8 @@ import { Storage } from '@ionic/storage';
 export class MyApp {
   rootPage: string = '';
   isAuthenticated = false;
-  @ViewChild('nav') nav: NavController;
+  @ViewChild('nav')
+  nav: NavController;
 
   constructor(
     public platform: Platform,

@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header [ngClass]="{'hide-header':showheader,'show-header':hideheader}">
   <ion-navbar>
     <button ion-button icon-only menuToggle>
       <ion-icon name="menu"></ion-icon>
@@ -50,15 +50,15 @@
     <div class="card-profile_user-stats">
       <div class="stats-holder">
         <div class="user-stats">
-          <strong>Tweets</strong>
+          <strong>Posts</strong>
           <span>{{user.tweets}}</span>
         </div>
         <div class="user-stats">
-          <strong>Following</strong>
+          <strong>Droping</strong>
           <span>{{user.following}}</span>
         </div>
         <div class="user-stats">
-          <strong>Followers</strong>
+          <strong>Dropers</strong>
           <span>{{user.followers}}</span>
         </div>
       </div>

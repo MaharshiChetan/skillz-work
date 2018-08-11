@@ -87,6 +87,10 @@ export class CreateEventPage {
           this.eventData.eventLocation,
           Validators.required
         ),
+        eventCity: new FormControl(
+          this.eventData.eventCity,
+          Validators.required
+        ),
       });
     } else {
       this.eventForm = new FormGroup({
@@ -97,6 +101,7 @@ export class CreateEventPage {
         endTime: new FormControl(this.event.endTime, Validators.required),
         eventPrice: new FormControl('', Validators.required),
         eventLocation: new FormControl('', Validators.required),
+        eventCity: new FormControl('', Validators.required),
       });
     }
   }
@@ -187,12 +192,14 @@ export class CreateEventPage {
     const endDate = this.eventForm.get('endDate').value;
     const startTime = this.eventForm.get('startTime').value;
     const endTime = this.eventForm.get('endTime').value;
+    const eventCity = this.eventForm.get('eventCity').value;
 
     if (this.eventData) {
       this.updateEvent(
         eventName,
         eventDescription,
         eventLocation,
+        eventCity,
         eventPrice,
         startDate,
         endDate,
@@ -205,6 +212,7 @@ export class CreateEventPage {
         eventName,
         eventDescription,
         eventLocation,
+        eventCity,
         eventPrice,
         startDate,
         endDate,
@@ -218,6 +226,7 @@ export class CreateEventPage {
     eventName,
     eventDescription,
     eventLocation,
+    eventCity,
     eventPrice,
     startDate,
     endDate,
@@ -253,6 +262,7 @@ export class CreateEventPage {
               eventName,
               eventDescription,
               eventLocation,
+              eventCity,
               eventPrice,
               startDate,
               endDate,
@@ -278,6 +288,7 @@ export class CreateEventPage {
           eventName,
           eventDescription,
           eventLocation,
+          eventCity,
           eventPrice,
           startDate,
           endDate,
@@ -304,6 +315,7 @@ export class CreateEventPage {
               eventName,
               eventDescription,
               eventLocation,
+              eventCity,
               eventPrice,
               startDate,
               endDate,

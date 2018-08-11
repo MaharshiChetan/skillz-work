@@ -8,17 +8,18 @@ event-details-page {
   .center {
     width: 100%;
     height: auto;
+    max-height: 450px;
   }
   /* Header */
-  .toolbar-background {
+  /* .toolbar-background {
     border-color: transparent;
     background: $black-overlay;
-  }
+  } */
 
-  .bar-button,
+  /* .bar-button,
   .toolbar-title {
     color: $banner-text-color;
-  }
+  } */
 
   /* Image */
   .housing-image {
@@ -63,14 +64,6 @@ event-details-page {
     background: $detail-background;
     ion-icon {
       margin-right: 0.5rem;
-    }
-  }
-
-  .main-features {
-    color: #3cc59a;
-
-    ion-icon {
-      font-size: 5.5rem !important;
     }
   }
 

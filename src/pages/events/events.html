@@ -11,13 +11,13 @@
   <ion-refresher (ionRefresh)="fetchEvents($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-  <ion-list>
-    <ion-item *ngFor="let e of events">
+  <ion-list [virtualScroll]="events">
+    <ion-item *virtualItem="let e">
       <ion-thumbnail item-start>
         <img [src]="e.eventImage">
       </ion-thumbnail>
       <h2>{{ e.eventName }}</h2>
-      <p>{{ e.eventLocation }}</p>
+      <p>{{ e.eventCity }}</p>
       <p>{{ e.startDate }} {{ e.startTime }}AM</p>
       <button ion-button clear item-end (click)="goToEventDetails(e)">View</button>
     </ion-item>

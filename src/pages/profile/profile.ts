@@ -1,21 +1,31 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import {
   IonicPage,
   NavController,
-  NavParams,
   LoadingController,
   ToastController,
   ModalController,
   FabContainer,
+  Content,
 } from 'ionic-angular';
 import { AuthProvider } from '../../providers/auth/auth';
+import { ElementRef } from '@angular/core';
 
 @IonicPage()
 @Component({
   selector: 'profile-page',
   templateUrl: 'profile.html',
 })
-export class ProfilePage {
+export class ProfilePage implements OnInit {
+  @ViewChild(Content)
+  content: Content;
+  start = 0;
+  threshold = 100;
+  slideHeaderPrevious = 0;
+  ionScroll: any;
+  showheader: boolean;
+  hideheader: boolean;
+  headercontent: any;
   userDetails: any;
 
   posts = [
@@ -29,24 +39,6 @@ export class ProfilePage {
       comments: 4,
       timestamp: '11h ago',
     },
-    {
-      postImageUrl: 'assets/img/background/background-2.jpg',
-      text:
-        'Do not go where the path may lead, go instead where there is no path and leave a trail.',
-      date: 'October 23, 2016',
-      likes: 30,
-      comments: 64,
-      timestamp: '30d ago',
-    },
-    {
-      postImageUrl: 'assets/img/background/background-2.jpg',
-      date: 'June 28, 2016',
-      likes: 46,
-      text: `Hope is the thing with feathers that perches in the soul
-             and sings the tune without the words And never stops at all.`,
-      comments: 66,
-      timestamp: '4mo ago',
-    },
   ];
 
   user = {
@@ -59,14 +51,38 @@ export class ProfilePage {
   };
 
   constructor(
-    public navCtrl: NavController,
-    public navParams: NavParams,
+    private navCtrl: NavController,
     private authService: AuthProvider,
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
-    private modalCtrl: ModalController
-  ) {}
+    private modalCtrl: ModalController,
+    private myElement: ElementRef
+  ) {
+    this.showheader = false;
+    this.hideheader = true;
+  }
 
+  ngOnInit() {
+    // Ionic scroll element
+    this.ionScroll = this.myElement.nativeElement.getElementsByClassName(
+      'scroll-content'
+    )[0];
+    // On scroll function
+    this.ionScroll.addEventListener('scroll', () => {
+      if (this.ionScroll.scrollTop - this.start > this.threshold) {
+        this.showheader = true;
+        this.hideheader = false;
+      } else {
+        this.showheader = false;
+        this.hideheader = true;
+      }
+      if (this.slideHeaderPrevious >= this.ionScroll.scrollTop - this.start) {
+        this.showheader = false;
+        this.hideheader = true;
+      }
+      this.slideHeaderPrevious = this.ionScroll.scrollTop - this.start;
+    });
+  }
   ionViewDidLoad() {
     this.fetchUserProfile(null);
   }
@@ -75,7 +91,6 @@ export class ProfilePage {
     if (refresher) {
       this.authService.getUserDetails().then(user => {
         this.userDetails = user;
-        console.log(this.userDetails);
         refresher.complete();
       });
     } else {
