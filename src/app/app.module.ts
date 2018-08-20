@@ -17,6 +17,10 @@ import { CallNumber } from '@ionic-native/call-number';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { EventsProvider } from '../providers/events/events';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireModule } from 'angularfire2';
+import { config } from './app.firebase';
+import { AngularFireAuthModule } from 'angularfire2/auth';
 
 @NgModule({
   declarations: [MyApp],
@@ -24,9 +28,12 @@ import { EventsProvider } from '../providers/events/events';
     BrowserModule,
     HttpClientModule,
     IonicStorageModule.forRoot(),
+    AngularFireModule.initializeApp(config),
     IonicModule.forRoot(MyApp, {
       tabsHideOnSubPages: true,
     }),
+    AngularFireDatabaseModule,
+    AngularFireAuthModule,
   ],
   bootstrap: [IonicApp],
   entryComponents: [MyApp],

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { NavController, IonicPage, AlertController } from 'ionic-angular';
+import { Component, OnDestroy } from '@angular/core';
+import { NavController, IonicPage } from 'ionic-angular';
 import { EventsProvider } from '../../providers/events/events';
 
 @IonicPage()
@@ -8,11 +8,11 @@ import { EventsProvider } from '../../providers/events/events';
   templateUrl: 'events.html',
 })
 export class EventsPage {
-  events: any = [];
+  events: any[];
+  subscription: any;
   constructor(
     public navCtrl: NavController,
-    private eventService: EventsProvider,
-    private alertCtrl: AlertController
+    private eventService: EventsProvider
   ) {}
 
   ionViewDidLoad() {
@@ -20,26 +20,17 @@ export class EventsPage {
   }
 
   fetchEvents(refresher) {
-    if (refresher) {
-      this.eventService.fetchEvent().then(events => {
-        this.events = events;
-        refresher.complete();
-      });
-    } else {
-      this.eventService.fetchEvent().then(events => {
-        this.events = events;
-        console.log(this.events);
-        if (this.events.length <= 0) {
-          const alert = this.alertCtrl.create({
-            title: 'Error!',
-            subTitle: 'There are no events right now!',
-            buttons: ['OK'],
-          });
-          alert.present();
-        }
-      });
-    }
+    this.subscription = this.eventService.fetchEvent().subscribe(events => {
+      this.events = events;
+
+      if (refresher) refresher.complete();
+    });
   }
+
+  ionViewWillLeave() {
+    this.subscription.unsubscribe();
+  }
+
   goToEventDetails(event) {
     this.navCtrl.push('EventDetailsPage', { event: event });
   }

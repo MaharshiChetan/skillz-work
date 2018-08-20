@@ -5,11 +5,13 @@ import {
   LoadingController,
   ToastController,
   ModalController,
-  FabContainer,
   Content,
+  Platform,
+  ActionSheetController,
 } from 'ionic-angular';
 import { AuthProvider } from '../../providers/auth/auth';
 import { ElementRef } from '@angular/core';
+import { CameraProvider } from '../../providers/camera/camera';
 
 @IonicPage()
 @Component({
@@ -27,6 +29,7 @@ export class ProfilePage implements OnInit {
   hideheader: boolean;
   headercontent: any;
   userDetails: any;
+  chosenPicture: string;
 
   posts = [
     {
@@ -56,7 +59,10 @@ export class ProfilePage implements OnInit {
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
     private modalCtrl: ModalController,
-    private myElement: ElementRef
+    private myElement: ElementRef,
+    private cameraService: CameraProvider,
+    private actionsheetCtrl: ActionSheetController,
+    private platform: Platform
   ) {
     this.showheader = false;
     this.hideheader = true;
@@ -87,6 +93,73 @@ export class ProfilePage implements OnInit {
     this.fetchUserProfile(null);
   }
 
+  changePicture() {
+    const actionsheet = this.actionsheetCtrl.create({
+      title: 'Upload Picture',
+      buttons: [
+        {
+          text: 'Camera',
+          icon: !this.platform.is('ios') ? 'camera' : null,
+          handler: () => {
+            this.takePicture();
+          },
+        },
+        {
+          text: !this.platform.is('ios') ? 'Gallery' : 'Camera Roll',
+          icon: !this.platform.is('ios') ? 'image' : null,
+          handler: () => {
+            this.getPicture();
+          },
+        },
+        {
+          text: 'Cancel',
+          icon: !this.platform.is('ios') ? 'close' : null,
+          role: 'destructive',
+          handler: () => {
+            console.log('the user has cancelled the interaction.');
+          },
+        },
+      ],
+    });
+    return actionsheet.present();
+  }
+
+  takePicture() {
+    const loading = this.loadingCtrl.create();
+
+    loading.present();
+    return this.cameraService.getPictureFromCamera(true).then(
+      picture => {
+        if (picture) {
+          this.chosenPicture = picture;
+          this.navCtrl.push('CreatePostPage', { image: this.chosenPicture });
+        }
+        loading.dismiss();
+      },
+      error => {
+        alert(error);
+      }
+    );
+  }
+
+  getPicture() {
+    const loading = this.loadingCtrl.create();
+
+    loading.present();
+    return this.cameraService.getPictureFromPhotoLibrary(true).then(
+      picture => {
+        if (picture) {
+          this.chosenPicture = picture;
+          this.navCtrl.push('CreatePostPage', { image: this.chosenPicture });
+        }
+        loading.dismiss();
+      },
+      error => {
+        alert(error);
+      }
+    );
+  }
+
   fetchUserProfile(refresher) {
     if (refresher) {
       this.authService.getUserDetails().then(user => {
@@ -103,9 +176,8 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  editUserProfile(fab: FabContainer) {
-    fab.close();
-    this.navCtrl.push('EditProfilePage');
+  editUserProfile() {
+    this.navCtrl.push('EditProfilePage', { userDetails: this.userDetails });
   }
 
   logout() {
@@ -141,8 +213,7 @@ export class ProfilePage implements OnInit {
 
   uploadPost() {}
 
-  goToSettingsModal(fab: FabContainer) {
-    fab.close();
+  goToSettingsModal() {
     const modal = this.modalCtrl.create('SettingsPage');
     modal.present();
   }

@@ -5,11 +5,13 @@
 </ion-header>
 <ion-content padding text-center>
   <div *ngIf="userProfile">
+
     <ion-avatar (click)="changePicture()">
       <img class="image" [src]="chosenPicture || userProfile.profilePhoto"
         onerror="this.src='userProfile.profilePhoto'" />
       <button ion-button color="danger">Change image</button>
     </ion-avatar>
+
     <form [formGroup]="form" (ngSubmit)="updateUserProfile()">
       <ion-list>
         <ion-item>

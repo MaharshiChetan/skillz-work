@@ -1,0 +1,18 @@
+create-post-page {
+  .image {
+    margin: auto;
+    height: 110px;
+    width: 110px;
+    display: block;
+  }
+
+  ion-content {
+    background: linear-gradient(#5850ce);
+  }
+  ion-card.content {
+    background-color: dimgrey;
+  }
+  .write-post {
+    margin-top: 12px;
+  }
+}

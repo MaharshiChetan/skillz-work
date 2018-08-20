@@ -1,79 +1,30 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import firebase from 'firebase';
+import { AngularFireDatabase } from 'angularfire2/database';
 
 @Injectable()
 export class EventsProvider {
   eventData: any = firebase.database().ref('/events');
-  constructor(public http: HttpClient) {}
+  constructor(private db: AngularFireDatabase) {}
 
-  createEvent(
-    eventName,
-    eventDescription,
-    eventLocation,
-    eventCity,
-    eventPrice,
-    startDate,
-    endDate,
-    startTime,
-    endTime,
-    eventImage,
-    eventNumber?: any
-  ) {
-    if (eventNumber) {
-      return new Promise(resolve => {
-        this.eventData
-          .child(`/${eventNumber}`)
-          .set({
-            uid: firebase.auth().currentUser.uid,
-            eventName: eventName,
-            eventNumber: eventNumber,
-            eventDescription: eventDescription,
-            eventLocation: eventLocation,
-            eventCity: eventCity,
-            eventPrice: eventPrice,
-            startDate: startDate,
-            endDate: endDate,
-            startTime: startTime,
-            endTime: endTime,
-            eventImage: eventImage,
-          })
-          .then(res => {
-            resolve(true);
-          })
-          .catch(err => {
-            console.error(err);
-            resolve(false);
-          });
+  createEvent(event, eventImage, eventNumber?: any) {
+    try {
+      return this.eventData.child(`/${eventNumber}`).set({
+        uid: firebase.auth().currentUser.uid,
+        eventName: event.eventName,
+        eventDescription: event.eventDescription,
+        eventLocation: event.eventLocation,
+        eventCity: event.eventCity,
+        eventPrice: event.eventPrice,
+        startDate: event.startDate,
+        endDate: event.endDate,
+        startTime: event.startTime,
+        endTime: event.endTime,
+        eventNumber: eventNumber,
+        eventImage: eventImage,
       });
-    } else {
-      return new Promise(resolve => {
-        this.fetchLastEvent().then(lastEvent => {
-          this.eventData
-            .child(`/${lastEvent}`)
-            .set({
-              uid: firebase.auth().currentUser.uid,
-              eventName: eventName,
-              eventNumber: lastEvent,
-              eventDescription: eventDescription,
-              eventLocation: eventLocation,
-              eventCity: eventCity,
-              eventPrice: eventPrice,
-              startDate: startDate,
-              endDate: endDate,
-              startTime: startTime,
-              endTime: endTime,
-              eventImage: eventImage,
-            })
-            .then(res => {
-              resolve(true);
-            })
-            .catch(err => {
-              console.error(err);
-              resolve(false);
-            });
-        });
-      });
+    } catch (e) {
+      console.log(e);
     }
   }
 
@@ -94,20 +45,10 @@ export class EventsProvider {
   }
 
   fetchEvent() {
-    return new Promise(resolve => {
-      this.eventData
-        .once('value', snapshot => {
-          const value = [];
-          if (snapshot.val()) {
-            snapshot.forEach(function(childSnapshot) {
-              value.push(childSnapshot.val());
-            });
-          }
-          resolve(value);
-        })
-        .catch(err => {
-          console.error(err);
-        });
-    });
+    try {
+      return this.db.list('events').valueChanges();
+    } catch (e) {
+      console.log(e);
+    }
   }
 }

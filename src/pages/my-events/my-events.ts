@@ -10,6 +10,8 @@ import firebase from 'firebase';
 })
 export class MyEventsPage {
   events: any;
+  subscription: any;
+
   constructor(
     private eventService: EventsProvider,
     private navCtrl: NavController
@@ -19,16 +21,16 @@ export class MyEventsPage {
     this.getMyEvents(null);
   }
 
+  ionViewWillLeave() {
+    this.subscription.unsubscribe();
+  }
   getMyEvents(refresher) {
-    this.eventService.fetchEvent().then(events => {
-      let tempEvents: any;
-      tempEvents = events;
+    this.subscription = this.eventService.fetchEvent().subscribe(events => {
+      let tempEvents: any = events;
       this.events = tempEvents.filter(event => {
         return firebase.auth().currentUser.uid == event.uid;
       });
-      if (refresher) {
-        refresher.complete();
-      }
+      if (refresher) refresher.complete();
     });
   }
 

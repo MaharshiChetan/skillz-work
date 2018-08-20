@@ -8,6 +8,7 @@ import {
   Platform,
   LoadingController,
   ToastController,
+  NavParams,
 } from 'ionic-angular';
 import { CameraProvider } from '../../providers/camera/camera';
 import { AuthProvider } from '../../providers/auth/auth';
@@ -24,6 +25,7 @@ export class EditProfilePage {
 
   constructor(
     private navCtrl: NavController,
+    private navParams: NavParams,
     private actionsheetCtrl: ActionSheetController,
     private cameraService: CameraProvider,
     private platform: Platform,
@@ -37,10 +39,8 @@ export class EditProfilePage {
   ionViewWillEnter() {
     const loader = this.loadingCtrl.create();
     loader.present();
-    this.authService.getUserDetails().then(userProfile => {
-      this.userProfile = userProfile;
-      loader.dismiss();
-    });
+    this.userProfile = this.navParams.get('userDetails');
+    loader.dismiss();
   }
 
   createForm() {

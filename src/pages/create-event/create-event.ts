@@ -24,29 +24,29 @@ import { AuthProvider } from '../../providers/auth/auth';
 })
 export class CreateEventPage {
   eventForm: FormGroup;
-  imageUrl: string;
   eventData: any;
-  des = 'this is event';
+  button: string = 'Create Event';
+  subscription: any;
+  imageChoice = 'Upload Image';
+  chosenPicture: string;
+  event = {
+    startTime: '10:00',
+    endTime: '07:00',
+    startDate: this.currentDate(),
+    endDate: this.currentDate(),
+    min: new Date().getFullYear(),
+    max: new Date().getFullYear() + 1,
+  };
 
   @HostListener('document:keydown.enter', ['$event'])
   onKeydownHandler(evt: KeyboardEvent) {
     this.adjust();
   }
 
-  imageChoice = 'Upload Image';
-  Text = {} as Text;
-  chosenPicture: string;
-
-  public event = {
-    startTime: '10:00',
-    endTime: '07:00',
-    startDate: '2018-01-01',
-    endDate: '2018-01-01',
-  };
   constructor(
-    public navCtrl: NavController,
-    public navParams: NavParams,
-    public element: ElementRef,
+    private navCtrl: NavController,
+    private navParams: NavParams,
+    private element: ElementRef,
     private cameraService: CameraProvider,
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
@@ -56,10 +56,29 @@ export class CreateEventPage {
     private authService: AuthProvider
   ) {
     this.eventData = this.navParams.get('eventData');
+    if (this.eventData) this.button = 'Update Event';
+
     this.createForm();
-    if (this.chosenPicture) {
-      this.imageChoice = 'Change Image';
-    }
+    if (this.chosenPicture || this.eventData) this.imageChoice = 'Change Image';
+  }
+
+  currentDate() {
+    const splitDate = new Date().toLocaleDateString().split('/');
+    splitDate[1] = splitDate[1].length == 1 ? '0' + splitDate[1] : splitDate[1];
+    splitDate[0] = splitDate[0].length == 1 ? '0' + splitDate[0] : splitDate[0];
+    return `${splitDate[2]}-${splitDate[0]}-${splitDate[1]}`;
+  }
+
+  formatAMPM(time) {
+    const hoursMinutes = time.split(':');
+    let hours = hoursMinutes[0];
+    let minutes = hoursMinutes[1];
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    minutes = minutes < 10 ? minutes : minutes;
+    const strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
   }
 
   createForm() {
@@ -75,10 +94,13 @@ export class CreateEventPage {
         ),
         endDate: new FormControl(this.eventData.endDate, Validators.required),
         startTime: new FormControl(
-          this.eventData.startTime,
+          this.eventData.startTime.substr(0, 5),
           Validators.required
         ),
-        endTime: new FormControl(this.eventData.endTime, Validators.required),
+        endTime: new FormControl(
+          this.eventData.endTime.substr(0, 5),
+          Validators.required
+        ),
         eventPrice: new FormControl(
           this.eventData.eventPrice,
           Validators.required
@@ -145,6 +167,7 @@ export class CreateEventPage {
       picture => {
         if (picture) {
           this.chosenPicture = picture;
+          this.imageChoice = 'Change Image';
         }
         loading.dismiss();
       },
@@ -162,6 +185,7 @@ export class CreateEventPage {
       picture => {
         if (picture) {
           this.chosenPicture = picture;
+          this.imageChoice = 'Change Image';
         }
         loading.dismiss();
       },
@@ -184,177 +208,101 @@ export class CreateEventPage {
   }
 
   submitForm(description) {
-    const eventName = this.eventForm.get('eventName').value;
-    const eventDescription = description.value;
-    const eventLocation = this.eventForm.get('eventLocation').value;
-    const eventPrice = this.eventForm.get('eventPrice').value;
-    const startDate = this.eventForm.get('startDate').value;
-    const endDate = this.eventForm.get('endDate').value;
-    const startTime = this.eventForm.get('startTime').value;
-    const endTime = this.eventForm.get('endTime').value;
-    const eventCity = this.eventForm.get('eventCity').value;
+    const event = {
+      eventName: this.eventForm.get('eventName').value,
+      eventDescription: description.value,
+      eventLocation: this.eventForm.get('eventLocation').value,
+      eventCity: this.eventForm.get('eventCity').value,
+      eventPrice: this.eventForm.get('eventPrice').value,
+      startDate: this.eventForm.get('startDate').value,
+      endDate: this.eventForm.get('endDate').value,
+      startTime: this.formatAMPM(this.eventForm.get('startTime').value),
+      endTime: this.formatAMPM(this.eventForm.get('endTime').value),
+    };
 
     if (this.eventData) {
-      this.updateEvent(
-        eventName,
-        eventDescription,
-        eventLocation,
-        eventCity,
-        eventPrice,
-        startDate,
-        endDate,
-        startTime,
-        endTime,
-        this.eventData.eventNumber
-      );
+      this.updateEvent(event, this.eventData.eventNumber);
     } else {
-      this.updateEvent(
-        eventName,
-        eventDescription,
-        eventLocation,
-        eventCity,
-        eventPrice,
-        startDate,
-        endDate,
-        startTime,
-        endTime
-      );
+      this.eventService.fetchLastEvent().then(eventNumber => {
+        this.updateEvent(event, eventNumber);
+      });
     }
   }
 
-  updateEvent(
-    eventName,
-    eventDescription,
-    eventLocation,
-    eventCity,
-    eventPrice,
-    startDate,
-    endDate,
-    startTime,
-    endTime,
-    eventNumber?: any
-  ) {
+  updateEvent(event, eventNumber) {
     if (!(this.chosenPicture || this.eventData)) {
-      this.toastCtrl
-        .create({
-          message: 'Please upload event image, Its mandatory!',
-          position: 'top',
-          duration: 2000,
-          cssClass: 'fail-toast',
-        })
-        .present();
+      this.presentToast(
+        'Please upload event image, Its mandatory!',
+        'fail-toast'
+      );
       return;
     }
     const loader = this.loadingCtrl.create();
     loader.present();
-
     const uid = this.authService.getActiveUser().uid;
+
     const imageStore = firebase
       .storage()
       .ref('/eventImages')
-      .child(uid);
+      .child(`${uid}/${eventNumber}`);
     if (this.chosenPicture && eventNumber) {
       imageStore.putString(this.chosenPicture, 'data_url').then(res => {
         imageStore.getDownloadURL().then(url => {
-          this.imageUrl = url;
           this.eventService
-            .createEvent(
-              eventName,
-              eventDescription,
-              eventLocation,
-              eventCity,
-              eventPrice,
-              startDate,
-              endDate,
-              startTime,
-              endTime,
-              this.imageUrl,
-              eventNumber
-            )
+            .createEvent(event, url, eventNumber)
             .then(res => {
               loader.dismiss();
-              this.presentSuccessToast();
+              this.presentToast('Successfully updated event!', 'success-toast');
               this.navCtrl.popToRoot();
             })
             .catch(e => {
               loader.dismiss();
-              this.presentFailToast();
+              this.presentToast('Failed to update event!', 'fail-toast');
             });
         });
       });
     } else if (this.eventData) {
       this.eventService
         .createEvent(
-          eventName,
-          eventDescription,
-          eventLocation,
-          eventCity,
-          eventPrice,
-          startDate,
-          endDate,
-          startTime,
-          endTime,
+          event,
           this.eventData.eventImage || this.chosenPicture,
           eventNumber
         )
         .then(res => {
           loader.dismiss();
-          this.presentSuccessToast();
+          this.presentToast('Successfully updated event!', 'success-toast');
           this.navCtrl.popToRoot();
         })
         .catch(e => {
           loader.dismiss();
-          this.presentFailToast();
+          this.presentToast('Failed to update event!', 'fail-toast');
         });
     } else {
       imageStore.putString(this.chosenPicture, 'data_url').then(res => {
         imageStore.getDownloadURL().then(url => {
-          this.imageUrl = url;
           this.eventService
-            .createEvent(
-              eventName,
-              eventDescription,
-              eventLocation,
-              eventCity,
-              eventPrice,
-              startDate,
-              endDate,
-              startTime,
-              endTime,
-              this.imageUrl
-            )
+            .createEvent(event, url, eventNumber)
             .then(res => {
               loader.dismiss();
-              this.presentSuccessToast();
+              this.presentToast('Successfully created event!', 'success-toast');
               this.navCtrl.popToRoot();
             })
             .catch(e => {
               loader.dismiss();
-              this.presentFailToast();
+              this.presentToast('Failed to create event!', 'fail-toast');
             });
         });
       });
     }
   }
 
-  presentFailToast() {
-    this.toastCtrl
+  presentToast(message: string, cssClass: string) {
+    return this.toastCtrl
       .create({
-        message: 'Failed to create event!',
+        message: message,
         position: 'top',
         duration: 2000,
-        cssClass: 'fail-toast',
-      })
-      .present();
-  }
-
-  presentSuccessToast() {
-    this.toastCtrl
-      .create({
-        message: 'Succefully created event!',
-        position: 'top',
-        duration: 2000,
-        cssClass: 'success-toast',
+        cssClass: cssClass,
       })
       .present();
   }

@@ -4,6 +4,7 @@ import {
   ToastController,
   NavController,
   MenuController,
+  AlertController,
 } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -29,7 +30,8 @@ export class MyApp {
     public storage: Storage,
     public network: Network,
     public toastCtrl: ToastController,
-    public menuCtrl: MenuController
+    public menuCtrl: MenuController,
+    private alertCtrl: AlertController
   ) {
     //INITIALIZES FIREBASE WITH THE APP
     firebase.initializeApp(config);
@@ -61,23 +63,9 @@ export class MyApp {
     //KEEPS CHECKING NETWORK CONNECTIVITY AND ALERTS USER IF DISCONNECTED
     this.network.onchange().subscribe(networkchange => {
       if (networkchange.type === 'online') {
-        this.toastCtrl
-          .create({
-            message: 'Back Online',
-            duration: 2000,
-            position: 'top',
-            cssClass: 'toastonline',
-          })
-          .present();
+        this.presentToast('Back Online', 'toastonline');
       } else if (networkchange.type === 'offline') {
-        this.toastCtrl
-          .create({
-            message: 'You Seem To Be Offline',
-            duration: 2000,
-            position: 'top',
-            cssClass: 'toastoffline',
-          })
-          .present();
+        this.presentToast('You Seem To Be Offline', 'toastoffline');
       }
     });
 
@@ -90,9 +78,28 @@ export class MyApp {
   }
 
   onLogout() {
-    this.storage.remove('user');
-    this.nav.setRoot('LoginPage');
-    this.menuCtrl.close();
+    let alertPopup = this.alertCtrl.create({
+      title: 'Log out of Skillz-Forever?',
+      message: 'You have to login again, once you have logout.',
+      buttons: [
+        {
+          text: 'Log Out',
+          handler: () => {
+            alertPopup.dismiss().then(() => {
+              this.storage.remove('user');
+              this.nav.setRoot('LoginPage');
+              this.menuCtrl.close();
+            });
+            return false;
+          },
+        },
+        {
+          text: 'Cancel',
+          handler: () => {},
+        },
+      ],
+    });
+    alertPopup.present();
   }
   goToCreateEvent() {
     this.nav.push('CreateEventPage');
@@ -102,5 +109,16 @@ export class MyApp {
   goToMyEvents() {
     this.nav.push('MyEventsPage');
     this.menuCtrl.close();
+  }
+
+  presentToast(message, cssClass) {
+    this.toastCtrl
+      .create({
+        message: message,
+        duration: 2000,
+        position: 'top',
+        cssClass: cssClass,
+      })
+      .present();
   }
 }
