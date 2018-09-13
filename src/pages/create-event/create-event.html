@@ -1,11 +1,16 @@
 <ion-header>
   <ion-navbar color="nav">
-    <ion-title>{{ button }}</ion-title>
+    <ion-buttons end>
+      <button ion-button (click)="submitForm(myInput)" [disabled]="!eventForm.valid">
+        {{ button | uppercase }}
+      </button>
+    </ion-buttons>
+    <ion-title>{{ button }} Event</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content text-center>
-  <form [formGroup]="eventForm" (ngSubmit)="submitForm(myInput)">
+  <form [formGroup]="eventForm">
     <ion-list>
 
       <ion-item>
@@ -14,13 +19,13 @@
       </ion-item>
       <ion-item>
         <ion-label floating>Description of Event</ion-label>
-        <ion-textarea #myInput [value]="eventData?.eventDescription"
-          id="myInput" rows="1" (keyup)="adjust()"></ion-textarea>
+        <ion-textarea #myInput rows="4" [value]="eventData?.eventDescription"
+          (keyup)="adjust()"></ion-textarea>
       </ion-item>
 
       <ion-item>
         <ion-label floating>Location</ion-label>
-        <ion-input formControlName="eventLocation"></ion-input>
+        <ion-textarea formControlName="eventLocation" rows="4"></ion-textarea>
       </ion-item>
       <ion-item>
         <ion-label floating>City</ion-label>
@@ -64,11 +69,19 @@
         {{ imageChoice }}
       </button>
 
+      <ion-item-group>
+        <ion-item-divider color="light">Judges</ion-item-divider>
+        <ion-item *ngFor="let judge of judges">
+          {{ judge.name }}
+        </ion-item>
+      </ion-item-group>
+
       <div padding>
-        <button type="submit" block ion-button block [disabled]="!eventForm.valid">
-          {{ button }}
+        <button type="button" block ion-button (click)="addJudges()">
+          Add Judges For Voting
         </button>
       </div>
+
 
     </ion-list>
   </form>

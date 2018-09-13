@@ -18,7 +18,8 @@
       </ion-thumbnail>
       <h2>{{ e.eventName }}</h2>
       <p>{{ e.eventCity }}</p>
-      <p>{{ e.startDate }} {{ e.startTime }}</p>
+      <p>{{ e.startDate | date:'mediumDate'}} {{ e.startTime
+        }}</p>
       <button ion-button clear item-end (click)="goToEventDetails(e)">View</button>
     </ion-item>
   </ion-list>

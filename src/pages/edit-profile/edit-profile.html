@@ -1,5 +1,5 @@
-<ion-header class="privacy-header legal-header">
-  <ion-navbar>
+<ion-header>
+  <ion-navbar color="nav">
     <ion-title>Edit Profile</ion-title>
   </ion-navbar>
 </ion-header>
@@ -9,7 +9,7 @@
     <ion-avatar (click)="changePicture()">
       <img class="image" [src]="chosenPicture || userProfile.profilePhoto"
         onerror="this.src='userProfile.profilePhoto'" />
-      <button ion-button color="danger">Change image</button>
+      <button ion-button clear color="btn">Change image</button>
     </ion-avatar>
 
     <form [formGroup]="form" (ngSubmit)="updateUserProfile()">

@@ -1,22 +1,26 @@
 event-details-page {
-  $black-overlay: rgba(0, 0, 0, 0.3);
-  $text-color: #666;
+  $black-overlay: rgba(0, 0, 0, 0.6);
+  $text-color: black;
   $banner-text-color: white;
-  $content-color: whitesmoke;
-  $detail-background: rgba(236, 236, 236, 0.8);
+  $content-color: white;
+  $detail-background: white;
 
-  .center {
+  .eventImage {
     width: 100%;
     height: auto;
     max-height: 400px;
+  }
+
+  .vote {
+    float: right;
   }
   /* Header */
   /* .toolbar-background {
     border-color: transparent;
     background: $black-overlay;
-  } */
+  }
 
-  /* .bar-button,
+  .bar-button,
   .toolbar-title {
     color: $banner-text-color;
   } */
@@ -29,23 +33,45 @@ event-details-page {
     position: relative;
   }
 
-  .housing-banner {
-    color: $banner-text-color;
-    background: $black-overlay;
-    height: 10vh;
-    width: 100vw;
-    position: absolute;
-    bottom: -1px;
-
-    .housing-title {
-      display: block;
-      font-size: 1.2rem;
-    }
-
-    .price {
-      font-size: 3rem;
-    }
+  .interested-going {
+    color: black;
+    background-color: white;
   }
+
+  p.responsive-font {
+    font-size: 4.4vw;
+  }
+
+  .grid {
+    padding: 0;
+  }
+
+  .click:active {
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .time-location {
+    font-size: 4.4vw;
+  }
+  .location {
+    color: gray;
+  }
+
+  .col {
+    padding: 0;
+    padding-top: 12px;
+  }
+  .categories-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    border-color: #242424;
+    border-style: solid;
+    display: inline-block;
+    margin: 7.5px !important;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  }
+
   /* Content */
   .content {
     background: $content-color;
@@ -57,7 +83,9 @@ event-details-page {
 
   .main-content {
     color: $text-color;
+    background: white;
   }
+
   .listing-details ion-col {
     padding: 1rem;
     margin: 0.45rem;

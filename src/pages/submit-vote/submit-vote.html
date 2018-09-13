@@ -1,0 +1,26 @@
+<ion-header>
+
+  <ion-navbar color="nav">
+    <ion-title>Submit Vote</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content padding>
+  <form [formGroup]="votingForm" (ngSubmit)="submit()">
+    <ion-list radio-group formControlName="judgeId">
+      <ion-list-header>
+        JUDGES
+      </ion-list-header>
+
+      <ion-item *ngFor="let judge of judges">
+        <ion-label>{{ judge.judgeDetail.name }}</ion-label>
+        <ion-radio [value]="judge.id"></ion-radio>
+      </ion-item>
+
+      <button ion-button block>
+        Submit
+      </button>
+    </ion-list>
+  </form>
+</ion-content>

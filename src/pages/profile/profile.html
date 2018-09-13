@@ -13,6 +13,7 @@
     </ion-title>
   </ion-navbar>
 </ion-header>
+
 <ion-content class="container transparent-header">
   <ion-refresher (ionRefresh)="fetchUserProfile($event)">
     <ion-refresher-content></ion-refresher-content>
@@ -20,14 +21,14 @@
   <div class="card-profile" *ngIf="userDetails">
     <div class="card-profile_visual">
       <img [src]="userDetails.profilePhoto" style="opacity: 0.5;" height="100%"
-        width="100%" />
+        width="100%" #myImage (click)="presentImage(myImage)" />
     </div>
 
     <div class="card-profile_user-infos">
       <span class="infos_name">{{userDetails.displayName}}</span>
       <span class="infos_nick">@{{userDetails.userName}}</span>
       <ion-fab>
-        <button ion-fab color="danger" (click)="changePicture()">
+        <button ion-fab color="post" (click)="changePicture()">
           <ion-icon name="add"></ion-icon>
         </button>
       </ion-fab>

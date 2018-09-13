@@ -1,5 +1,5 @@
-<ion-header>
-  <ion-navbar>
+<ion-header [ngClass]="{'hide-header':showheader,'show-header':hideheader}">
+  <ion-navbar color="nav">
     <ion-title>
       {{ event.eventName }}
     </ion-title>
@@ -8,30 +8,84 @@
 
 <ion-content>
   <section class="housing-image">
-    <img class="center" [src]="event.eventImage" alt="">
-    <section class="housing-banner" padding>
-      <span class="housing-title">{{event.eventName}}</span>
-      <span class="price">{{event.eventPrice | currency: 'INR':true }}</span>
-    </section>
+    <img class="eventImage" [src]="event.eventImage" alt="" #myImage
+      (click)="presentImage(myImage)">
+    <ion-grid>
+      <ion-row text-center icon-only class="interested-going">
+        <ion-col (click)="interested(event.key)" class="click">
+          <ion-icon color="primary" ios="ios-star-outline" md="md-star-outline"></ion-icon>
+          <!-- <ion-icon color="primary" ios="ios-star" md="md-star"></ion-icon> -->
+          <p class="responsive-font">Interested</p>
+        </ion-col>
+        <ion-col (click)="log('Going')" class="click">
+          <ion-icon color="primary" name="ios-checkmark-circle-outline"></ion-icon>
+          <!-- <ion-icon color="primary" name="ios-checkmark-circle"></ion-icon> -->
+          <p class="responsive-font">Going</p>
+        </ion-col>
+        <ion-col (click)="log('Share')" class="click">
+          <ion-icon name="share"></ion-icon>
+          <p class="responsive-font">Share</p>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <hr />
+    <ion-grid>
+      <ion-row class="time-location" icon-only>
+        <ion-col col-2>
+          <ion-icon ios="ios-time" md="md-time"></ion-icon>
+        </ion-col>
+        <ion-col>
+          {{ event.startDate | date:'mediumDate' }} - {{ event.endDate
+          | date:'mediumDate' }}
+        </ion-col>
+      </ion-row>
+      <ion-row class="time-location" icon-only>
+        <ion-col col-2>
+          <ion-icon ios="ios-locate" md="md-locate"></ion-icon>
+        </ion-col>
+        <ion-col>
+          {{ event.eventCity }}
+          <br> <div class="location">{{ event.eventLocation}}</div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </section>
+  <hr />
   <section class="main-content">
     <ion-grid class="listing-details">
       <!-- <ion-row>
-        <p margin-left margin-right no-margin-top style="text-align: justify">
+        <p margin-left margin-right no-margin-top style="text-align:
+            justify ">
           {{event.eventDescription.substring(0, 40)}}...
         </p>
       </ion-row> -->
-      <ion-row>
-        <ion-col>
-          <ion-icon name="home"></ion-icon>{{style}}
-        </ion-col>
-        <ion-col>
+      <ion-row text-center>
+        <ion-col class="categories-card click">
           <ion-icon name="pin"></ion-icon>{{event.eventCity}}
+        </ion-col>
+        <ion-col class="categories-card click" (click)="goRoReviewsPage()">
+          <ion-icon ios="ios-star" md="md-star"></ion-icon>
+          Reviews
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="event.eventJudges">
+        <ion-col class="categories-card">
+          <strong>***** VOTE FOR JUDGES *****</strong>
+          <p *ngFor="let judge of event.eventJudges">
+            {{ judge.name }}
+            <strong class="vote ">
+              {{ judge.totalVotes }}
+            </strong>
+          </p>
+          <button ion-button block clear color="btn" (click)="goToSubmitVotePage()">
+            Submit Vote
+          </button>
         </ion-col>
       </ion-row>
       <ion-row>
-        <ion-col>
-          {{event.eventDescription}}
+        <ion-col class="categories-card">
+          <strong>***** EVENT DESCRIPTION *****</strong>
+          <p>{{event.eventDescription}}</p>
         </ion-col>
       </ion-row>
     </ion-grid>
@@ -39,6 +93,7 @@
 </ion-content>
 <ion-footer>
   <button ion-button large full no-margin color="danger">
-    {{ bookingTitle }}
+    {{ bookingTitle }} ( {{event.eventPrice | currency: 'INR':true
+    }} )
   </button>
 </ion-footer>

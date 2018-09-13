@@ -21,6 +21,7 @@ import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireModule } from 'angularfire2';
 import { config } from './app.firebase';
 import { AngularFireAuthModule } from 'angularfire2/auth';
+import { IonicImageViewerModule } from 'ionic-img-viewer';
 
 @NgModule({
   declarations: [MyApp],
@@ -34,6 +35,7 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
     }),
     AngularFireDatabaseModule,
     AngularFireAuthModule,
+    IonicImageViewerModule,
   ],
   bootstrap: [IonicApp],
   entryComponents: [MyApp],

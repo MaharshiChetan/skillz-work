@@ -12,6 +12,7 @@ import {
 import { AuthProvider } from '../../providers/auth/auth';
 import { ElementRef } from '@angular/core';
 import { CameraProvider } from '../../providers/camera/camera';
+import { ImageViewerController } from 'ionic-img-viewer';
 
 @IonicPage()
 @Component({
@@ -55,6 +56,7 @@ export class ProfilePage implements OnInit {
 
   constructor(
     private navCtrl: NavController,
+    private imageViewerCtrl: ImageViewerController,
     private authService: AuthProvider,
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
@@ -91,6 +93,12 @@ export class ProfilePage implements OnInit {
   }
   ionViewDidLoad() {
     this.fetchUserProfile(null);
+  }
+
+  presentImage(myImage) {
+    const imageViewer = this.imageViewerCtrl.create(myImage);
+    imageViewer.present();
+    // imageViewer.onDidDismiss(() => alert('Viewer dismissed'));
   }
 
   changePicture() {

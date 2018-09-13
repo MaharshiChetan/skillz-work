@@ -1,4 +1,4 @@
-import { Component, Directive, HostListener, ElementRef } from '@angular/core';
+import { Component, ElementRef, AfterViewInit } from '@angular/core';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import {
   IonicPage,
@@ -8,40 +8,37 @@ import {
   LoadingController,
   ActionSheetController,
   ToastController,
+  AlertController,
 } from 'ionic-angular';
 import { CameraProvider } from '../../providers/camera/camera';
 import { EventsProvider } from '../../providers/events/events';
 import firebase from 'firebase';
 import { AuthProvider } from '../../providers/auth/auth';
+import { AngularFireDatabase } from 'angularfire2/database';
 
 @IonicPage()
 @Component({
   selector: 'create-event-page',
   templateUrl: 'create-event.html',
 })
-@Directive({
-  selector: 'ion-textarea[autosize]', // Attribute selector,
-})
-export class CreateEventPage {
+export class CreateEventPage implements AfterViewInit {
   eventForm: FormGroup;
   eventData: any;
-  button: string = 'Create Event';
+  imageStore: any;
+  button: string = 'Create';
   subscription: any;
   imageChoice = 'Upload Image';
   chosenPicture: string;
+  judges = [];
   event = {
     startTime: '10:00',
-    endTime: '07:00',
+    endTime: '19:00',
     startDate: this.currentDate(),
     endDate: this.currentDate(),
     min: new Date().getFullYear(),
     max: new Date().getFullYear() + 1,
   };
-
-  @HostListener('document:keydown.enter', ['$event'])
-  onKeydownHandler(evt: KeyboardEvent) {
-    this.adjust();
-  }
+  showAlertMessage = true;
 
   constructor(
     private navCtrl: NavController,
@@ -51,15 +48,53 @@ export class CreateEventPage {
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
     private actionsheetCtrl: ActionSheetController,
+    private alertCtrl: AlertController,
     private platform: Platform,
     private eventService: EventsProvider,
-    private authService: AuthProvider
+    private authService: AuthProvider,
+    private db: AngularFireDatabase
   ) {
     this.eventData = this.navParams.get('eventData');
-    if (this.eventData) this.button = 'Update Event';
+
+    if (this.eventData) {
+      this.button = 'Update';
+      this.judges = this.eventData.eventJudges || [];
+    }
 
     this.createForm();
     if (this.chosenPicture || this.eventData) this.imageChoice = 'Change Image';
+  }
+
+  ngAfterViewInit() {
+    this.adjust();
+  }
+
+  ionViewCanLeave() {
+    if (!this.eventData) {
+      if (this.showAlertMessage) {
+        let alertPopup = this.alertCtrl.create({
+          title: 'Discard Event?',
+          message: "This event won't be saved.",
+          buttons: [
+            {
+              text: 'Discard Event',
+              handler: () => {
+                alertPopup.dismiss().then(() => {
+                  this.exitPage();
+                });
+                return false;
+              },
+            },
+            {
+              text: 'Cancel',
+              handler: () => {},
+            },
+          ],
+        });
+        alertPopup.present();
+        return false;
+      }
+    }
   }
 
   currentDate() {
@@ -68,7 +103,7 @@ export class CreateEventPage {
     splitDate[0] = splitDate[0].length == 1 ? '0' + splitDate[0] : splitDate[0];
     return `${splitDate[2]}-${splitDate[0]}-${splitDate[1]}`;
   }
-
+  /*
   formatAMPM(time) {
     const hoursMinutes = time.split(':');
     let hours = hoursMinutes[0];
@@ -80,7 +115,7 @@ export class CreateEventPage {
     const strTime = hours + ':' + minutes + ' ' + ampm;
     return strTime;
   }
-
+ */
   createForm() {
     if (this.eventData) {
       this.eventForm = new FormGroup({
@@ -94,13 +129,10 @@ export class CreateEventPage {
         ),
         endDate: new FormControl(this.eventData.endDate, Validators.required),
         startTime: new FormControl(
-          this.eventData.startTime.substr(0, 5),
+          this.eventData.startTime,
           Validators.required
         ),
-        endTime: new FormControl(
-          this.eventData.endTime.substr(0, 5),
-          Validators.required
-        ),
+        endTime: new FormControl(this.eventData.endTime, Validators.required),
         eventPrice: new FormControl(
           this.eventData.eventPrice,
           Validators.required
@@ -133,14 +165,14 @@ export class CreateEventPage {
       title: 'upload picture',
       buttons: [
         {
-          text: 'camera',
+          text: 'Camera',
           icon: !this.platform.is('ios') ? 'camera' : null,
           handler: () => {
             this.takePicture();
           },
         },
         {
-          text: !this.platform.is('ios') ? 'gallery' : 'camera roll',
+          text: !this.platform.is('ios') ? 'Gallery' : 'Camera roll',
           icon: !this.platform.is('ios') ? 'image' : null,
           handler: () => {
             this.getPicture();
@@ -194,9 +226,6 @@ export class CreateEventPage {
       }
     );
   }
-  ngAfterViewInit() {
-    this.adjust();
-  }
 
   adjust(): void {
     let textArea = this.element.nativeElement.getElementsByTagName(
@@ -204,10 +233,13 @@ export class CreateEventPage {
     )[0];
     textArea.style.overflow = 'hidden';
     textArea.style.height = 'auto';
-    textArea.style.height = textArea.scrollHeight + 32 + 'px';
+    textArea.style.height = textArea.scrollHeight + 10 + 'px';
   }
 
   submitForm(description) {
+    console.log(this.eventForm.get('startTime').value);
+    console.log(this.eventForm.get('endTime').value);
+
     const event = {
       eventName: this.eventForm.get('eventName').value,
       eventDescription: description.value,
@@ -216,20 +248,19 @@ export class CreateEventPage {
       eventPrice: this.eventForm.get('eventPrice').value,
       startDate: this.eventForm.get('startDate').value,
       endDate: this.eventForm.get('endDate').value,
-      startTime: this.formatAMPM(this.eventForm.get('startTime').value),
-      endTime: this.formatAMPM(this.eventForm.get('endTime').value),
+      startTime: this.eventForm.get('startTime').value,
+      endTime: this.eventForm.get('endTime').value,
+      eventJudges: this.judges,
     };
 
     if (this.eventData) {
-      this.updateEvent(event, this.eventData.eventNumber);
+      this.updateEvent(event, this.eventData.key);
     } else {
-      this.eventService.fetchLastEvent().then(eventNumber => {
-        this.updateEvent(event, eventNumber);
-      });
+      this.updateEvent(event);
     }
   }
 
-  updateEvent(event, eventNumber) {
+  updateEvent(event, eventKey?: any) {
     if (!(this.chosenPicture || this.eventData)) {
       this.presentToast(
         'Please upload event image, Its mandatory!',
@@ -241,18 +272,23 @@ export class CreateEventPage {
     loader.present();
     const uid = this.authService.getActiveUser().uid;
 
-    const imageStore = firebase
+    let imageId = this.eventData
+      ? this.eventData.imageId
+      : this.db.createPushId();
+
+    this.imageStore = firebase
       .storage()
       .ref('/eventImages')
-      .child(`${uid}/${eventNumber}`);
-    if (this.chosenPicture && eventNumber) {
-      imageStore.putString(this.chosenPicture, 'data_url').then(res => {
-        imageStore.getDownloadURL().then(url => {
+      .child(`${uid}/${imageId}`);
+    if (this.chosenPicture && eventKey) {
+      this.imageStore.putString(this.chosenPicture, 'data_url').then(res => {
+        this.imageStore.getDownloadURL().then(url => {
           this.eventService
-            .createEvent(event, url, eventNumber)
+            .updateEvent(event, url, eventKey, this.eventData.imageId)
             .then(res => {
               loader.dismiss();
               this.presentToast('Successfully updated event!', 'success-toast');
+              this.showAlertMessage = false;
               this.navCtrl.popToRoot();
             })
             .catch(e => {
@@ -263,14 +299,16 @@ export class CreateEventPage {
       });
     } else if (this.eventData) {
       this.eventService
-        .createEvent(
+        .updateEvent(
           event,
           this.eventData.eventImage || this.chosenPicture,
-          eventNumber
+          eventKey,
+          this.eventData.imageId
         )
         .then(res => {
           loader.dismiss();
           this.presentToast('Successfully updated event!', 'success-toast');
+          this.showAlertMessage = false;
           this.navCtrl.popToRoot();
         })
         .catch(e => {
@@ -278,22 +316,45 @@ export class CreateEventPage {
           this.presentToast('Failed to update event!', 'fail-toast');
         });
     } else {
-      imageStore.putString(this.chosenPicture, 'data_url').then(res => {
-        imageStore.getDownloadURL().then(url => {
-          this.eventService
-            .createEvent(event, url, eventNumber)
-            .then(res => {
-              loader.dismiss();
-              this.presentToast('Successfully created event!', 'success-toast');
-              this.navCtrl.popToRoot();
-            })
-            .catch(e => {
-              loader.dismiss();
-              this.presentToast('Failed to create event!', 'fail-toast');
-            });
+      this.imageStore.putString(this.chosenPicture, 'data_url').then(res => {
+        this.imageStore.getDownloadURL().then(url => {
+          this.eventService.createEvent(event, url, imageId).then(res => {
+            loader.dismiss();
+            this.presentToast('Successfully created event!', 'success-toast');
+            this.showAlertMessage = false;
+            this.navCtrl.popToRoot();
+          });
         });
       });
     }
+  }
+
+  addJudges() {
+    const prompt = this.alertCtrl.create({
+      title: 'Add Judge',
+      message: 'Enter the name of judge.',
+      inputs: [
+        {
+          name: 'judge',
+          placeholder: 'Judge',
+        },
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          handler: data => {
+            console.log('Cancel clicked');
+          },
+        },
+        {
+          text: 'Add',
+          handler: data => {
+            this.judges.push({ name: data.judge, totalVotes: 0 });
+          },
+        },
+      ],
+    });
+    prompt.present();
   }
 
   presentToast(message: string, cssClass: string) {
@@ -305,5 +366,10 @@ export class CreateEventPage {
         cssClass: cssClass,
       })
       .present();
+  }
+
+  private exitPage() {
+    this.showAlertMessage = false;
+    this.navCtrl.popToRoot();
   }
 }

@@ -22,7 +22,7 @@ $black-c: lighten($black, 40%);
 $black-d: lighten($black, 60%);
 
 // $theme-color-1: #00e9d5;
-$theme-color-1: #494949;
+$theme-color-1: #242424;
 $theme-color-2: #ae75e7;
 $theme-color-3: #5e5874;
 
@@ -35,13 +35,15 @@ $theme-color-3: #5e5874;
 // The "primary" color is the only required color in the map.
 
 $colors: (
-  primary: #387ef5,
+  primary: #242424,
   secondary: #32db64,
   danger: #f53d3d,
+  post: #545454,
   light: #f4f4f4,
   dark: #222,
   favorite: #69bb7b,
-  nav: #2826a1,
+  nav: #242424,
+  btn: #387ef5,
   walkthrough: (
     base: $theme-color-1,
     contrast: $white,

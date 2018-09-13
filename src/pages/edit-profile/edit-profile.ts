@@ -101,21 +101,21 @@ export class EditProfilePage {
       title: 'upload picture',
       buttons: [
         {
-          text: 'camera',
+          text: 'Camera',
           icon: !this.platform.is('ios') ? 'camera' : null,
           handler: () => {
             this.takePicture();
           },
         },
         {
-          text: !this.platform.is('ios') ? 'gallery' : 'camera roll',
+          text: !this.platform.is('ios') ? 'Gallery' : 'Camera roll',
           icon: !this.platform.is('ios') ? 'image' : null,
           handler: () => {
             this.getPicture();
           },
         },
         {
-          text: 'cancel',
+          text: 'Cancel',
           icon: !this.platform.is('ios') ? 'close' : null,
           role: 'destructive',
           handler: () => {
