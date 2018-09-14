@@ -19,13 +19,13 @@
       </ion-item>
       <ion-item>
         <ion-label floating>Description of Event</ion-label>
-        <ion-textarea #myInput rows="4" [value]="eventData?.eventDescription"
-          (keyup)="adjust()"></ion-textarea>
+        <ion-textarea #myInput rows="3" [value]="eventData?.eventDescription"
+          (keyup)="adjust(0)"></ion-textarea>
       </ion-item>
 
       <ion-item>
-        <ion-label floating>Location</ion-label>
-        <ion-textarea formControlName="eventLocation" rows="4"></ion-textarea>
+        <ion-label floating>Location(Full Address)</ion-label>
+        <ion-textarea formControlName="eventLocation" rows="3" (keyup)="adjust(1)"></ion-textarea>
       </ion-item>
       <ion-item>
         <ion-label floating>City</ion-label>

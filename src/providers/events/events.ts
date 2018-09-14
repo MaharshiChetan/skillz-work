@@ -53,7 +53,7 @@ export class EventsProvider {
     }
   }
 
-  fetchEvent() {
+  fetchEvents() {
     try {
       return this.db
         .list('events')
@@ -63,6 +63,36 @@ export class EventsProvider {
         );
     } catch (e) {
       console.log(e);
+    }
+  }
+
+  async fetchInterestedUsers(eventKey, uid) {
+    try {
+      let favourite = false;
+      await this.eventData
+        .child(`${eventKey}/interested/users`)
+        .once('value', snapshot => {
+          snapshot.forEach(childSnapshot => {
+            if (childSnapshot.key === uid) favourite = true;
+          });
+        });
+
+      return favourite;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  deleteEvent(event) {
+    try {
+      this.imageStore
+        .child(`${firebase.auth().currentUser.uid}/${event.imageId}`)
+        .delete()
+        .then(() => {
+          this.eventData.child(event.key).remove();
+        });
+    } catch (e) {
+      return e;
     }
   }
 
@@ -76,19 +106,6 @@ export class EventsProvider {
             .update({
               totalVotes: snapshot.val().totalVotes + 1,
             });
-        });
-    } catch (e) {
-      return e;
-    }
-  }
-
-  deleteEvent(event) {
-    try {
-      this.imageStore
-        .child(`${firebase.auth().currentUser.uid}/${event.imageId}`)
-        .delete()
-        .then(() => {
-          this.eventData.child(event.key).remove();
         });
     } catch (e) {
       return e;
@@ -126,6 +143,7 @@ export class EventsProvider {
       return e;
     }
   }
+
   decrementInterest(eventKey, user) {
     try {
       this.eventData.child(`${eventKey}/interested/users/${user.uid}`).remove();

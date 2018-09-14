@@ -27,7 +27,7 @@ export class MyEventsPage {
   }
 
   getMyEvents(refresher) {
-    this.subscription = this.eventService.fetchEvent().subscribe(events => {
+    this.subscription = this.eventService.fetchEvents().subscribe(events => {
       let tempEvents: any = events;
       this.events = tempEvents.filter(event => {
         return firebase.auth().currentUser.uid == event.uid;

@@ -66,7 +66,7 @@ export class CreateEventPage implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.adjust();
+    this.adjust(0);
   }
 
   ionViewCanLeave() {
@@ -227,10 +227,10 @@ export class CreateEventPage implements AfterViewInit {
     );
   }
 
-  adjust(): void {
-    let textArea = this.element.nativeElement.getElementsByTagName(
-      'textarea'
-    )[0];
+  adjust(index): void {
+    let textArea = this.element.nativeElement.getElementsByTagName('textarea')[
+      index
+    ];
     textArea.style.overflow = 'hidden';
     textArea.style.height = 'auto';
     textArea.style.height = textArea.scrollHeight + 10 + 'px';

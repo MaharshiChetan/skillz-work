@@ -330,22 +330,23 @@ export class AuthProvider {
     });
   }
 
-  createUser(uid, name, username, displayPic) {
+  createUser(uid, name, username, profilePhoto) {
     return new Promise(resolve => {
       firebase
         .auth()
         .currentUser.updateProfile({
           displayName: name,
-          photoURL: displayPic,
+          photoURL: profilePhoto,
         })
         .then(res => {
           this.usersdata
             .child(firebase.auth().currentUser.uid)
+            .child('personalData')
             .set({
               uid: firebase.auth().currentUser.uid,
               displayName: name,
               userName: username,
-              profilePhoto: displayPic,
+              profilePhoto: profilePhoto,
             })
             .then(res => {
               resolve(true);
@@ -368,7 +369,7 @@ export class AuthProvider {
         .get('user')
         .then(res => {
           this.usersdata
-            .child(res)
+            .child(`${res}/personalData`)
             .once('value', snapshot => {
               resolve(snapshot.toJSON());
             })

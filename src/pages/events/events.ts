@@ -20,7 +20,7 @@ export class EventsPage {
   }
 
   fetchEvents(refresher) {
-    this.subscription = this.eventService.fetchEvent().subscribe(events => {
+    this.subscription = this.eventService.fetchEvents().subscribe(events => {
       this.events = events;
 
       if (refresher) refresher.complete();
