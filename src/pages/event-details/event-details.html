@@ -12,9 +12,10 @@
       (click)="presentImage(myImage)">
     <ion-grid>
       <ion-row text-center icon-only class="interested-going">
-        <ion-col (click)="interested(event.key)" class="click">
-          <ion-icon color="primary" ios="ios-star-outline" md="md-star-outline"></ion-icon>
-          <!-- <ion-icon color="primary" ios="ios-star" md="md-star"></ion-icon> -->
+        <ion-col (click)="handleInterested(event.key)" class="click">
+          <ion-icon *ngIf="!interested" color="primary" ios="ios-star-outline"
+            md="md-star-outline"></ion-icon>
+          <ion-icon *ngIf="interested" color="primary" ios="ios-star" md="md-star"></ion-icon>
           <p class="responsive-font">Interested</p>
         </ion-col>
         <ion-col (click)="log('Going')" class="click">
@@ -49,6 +50,15 @@
         </ion-col>
       </ion-row>
     </ion-grid>
+    <hr />
+    <ion-row text-center style="font-weight: bold">
+      <ion-col>
+        Interested ({{ interestedCount }})
+      </ion-col>
+      <ion-col>
+        Going (0)
+      </ion-col>
+    </ion-row>
   </section>
   <hr />
   <section class="main-content">

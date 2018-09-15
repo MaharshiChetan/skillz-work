@@ -66,18 +66,14 @@ export class EventsProvider {
     }
   }
 
-  async fetchInterestedUsers(eventKey, uid) {
+  fetchInterestedUsers(eventKey) {
     try {
-      let favourite = false;
-      await this.eventData
-        .child(`${eventKey}/interested/users`)
-        .once('value', snapshot => {
-          snapshot.forEach(childSnapshot => {
-            if (childSnapshot.key === uid) favourite = true;
-          });
-        });
-
-      return favourite;
+      return this.db
+        .list(`events/${eventKey}/interested/users`)
+        .snapshotChanges()
+        .pipe(
+          map(actions => actions.map(a => ({ key: a.key, ...a.payload.val() })))
+        );
     } catch (e) {
       console.log(e);
     }
@@ -112,31 +108,34 @@ export class EventsProvider {
     }
   }
 
-  handleInterest(eventKey, user) {
+  async handleInterest(eventKey, user) {
+    let check = true;
     try {
-      this.eventData
+      await this.eventData
         .child(`${eventKey}/interested/users`)
         .once('value', snapshot => {
-          if (snapshot.val()) {
+          if (!snapshot.val()) {
+            this.incrementInterest(eventKey, user);
+          } else {
             snapshot.forEach(childSnapshot => {
               if (childSnapshot.key === user.uid) {
                 this.decrementInterest(eventKey, user);
-              } else {
-                this.incrementInterest(eventKey, user);
+                check = false;
               }
             });
-          } else {
-            this.incrementInterest(eventKey, user);
           }
         });
+      if (check) {
+        this.incrementInterest(eventKey, user);
+      }
     } catch (e) {
       return e;
     }
   }
 
-  incrementInterest(eventKey, user) {
+  async incrementInterest(eventKey, user) {
     try {
-      this.eventData
+      await this.eventData
         .child(`${eventKey}/interested/users/${user.uid}`)
         .set(user);
     } catch (e) {

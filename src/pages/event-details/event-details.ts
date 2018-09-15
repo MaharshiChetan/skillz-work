@@ -22,7 +22,11 @@ export class EventDetailsPage implements OnInit {
   bookingTitle: string = 'Book Ticket';
   style = 'Modern Interior';
   event;
-
+  interested = false;
+  going = false;
+  subscription;
+  interestedCount;
+  uid = this.authService.getActiveUser().uid;
   constructor(
     private navParams: NavParams,
     private navCtrl: NavController,
@@ -34,6 +38,24 @@ export class EventDetailsPage implements OnInit {
     this.showheader = false;
     this.hideheader = true;
     this.event = this.navParams.get('event');
+    this.subscription = this.eventService
+      .fetchInterestedUsers(this.event.key)
+      .subscribe(data => {
+        this.interestedCount = data.length;
+        this.checkInterest(data);
+      });
+  }
+
+  ionViewWillLeave() {
+    this.subscription.unsubscribe();
+  }
+
+  checkInterest(interestedUser) {
+    interestedUser.forEach(user => {
+      if (user.key === this.uid) {
+        this.interested = true;
+      }
+    });
   }
 
   ngOnInit() {
@@ -75,9 +97,14 @@ export class EventDetailsPage implements OnInit {
     this.navCtrl.push('ReviewsPage');
   }
 
-  interested(eventKey) {
+  handleInterested(eventKey) {
     this.authService.getUserDetails().then(user => {
-      this.eventService.handleInterest(eventKey, user);
+      try {
+        this.eventService.handleInterest(eventKey, user);
+        this.interested = !this.interested;
+      } catch (e) {
+        alert(e);
+      }
     });
   }
 }
