@@ -22,6 +22,9 @@ import { AngularFireModule } from 'angularfire2';
 import { config } from './app.firebase';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { IonicImageViewerModule } from 'ionic-img-viewer';
+import { FileTransfer } from '@ionic-native/file-transfer';
+import { File } from '@ionic-native/file';
+import { Message } from '../components/message/message.component';
 
 @NgModule({
   declarations: [MyApp],
@@ -50,10 +53,13 @@ import { IonicImageViewerModule } from 'ionic-img-viewer';
     CallNumber,
     SocialSharing,
     InAppBrowser,
+    FileTransfer,
+    File,
 
     AuthProvider,
     CameraProvider,
     EventsProvider,
+    Message,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

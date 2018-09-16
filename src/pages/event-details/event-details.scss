@@ -8,7 +8,7 @@ event-details-page {
   .eventImage {
     width: 100%;
     height: auto;
-    max-height: 320px;
+    max-height: 300px;
   }
 
   .vote {
@@ -36,10 +36,19 @@ event-details-page {
   .interested-going {
     color: black;
     background-color: white;
+    padding: 0px;
+  }
+
+  .vertical-align-content {
+    display: flex !important;
+    align-content: center !important;
+    align-items: center !important;
   }
 
   p.responsive-font {
     font-size: 4.4vw;
+    margin-top: 5.5px;
+    margin-bottom: 0px;
   }
 
   .grid {
@@ -57,10 +66,6 @@ event-details-page {
     color: gray;
   }
 
-  .col {
-    padding: 0;
-    padding-top: 12px;
-  }
   .categories-card {
     position: relative;
     overflow: hidden;

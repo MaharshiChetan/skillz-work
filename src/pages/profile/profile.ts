@@ -3,7 +3,6 @@ import {
   IonicPage,
   NavController,
   LoadingController,
-  ToastController,
   ModalController,
   Content,
   Platform,
@@ -59,7 +58,6 @@ export class ProfilePage implements OnInit {
     private imageViewerCtrl: ImageViewerController,
     private authService: AuthProvider,
     private loadingCtrl: LoadingController,
-    private toastCtrl: ToastController,
     private modalCtrl: ModalController,
     private myElement: ElementRef,
     private cameraService: CameraProvider,
@@ -192,32 +190,11 @@ export class ProfilePage implements OnInit {
     this.authService.logout();
   }
 
-  imageTapped(post) {
-    this.toastCtrl
-      .create({
-        message: 'Post image clicked',
-        duration: 2000,
-      })
-      .present();
-  }
+  imageTapped(post) {}
 
-  comment(post) {
-    this.toastCtrl
-      .create({
-        message: 'Comments clicked',
-        duration: 2000,
-      })
-      .present();
-  }
+  comment(post) {}
 
-  like(post) {
-    this.toastCtrl
-      .create({
-        message: 'Like clicked',
-        duration: 2000,
-      })
-      .present();
-  }
+  like(post) {}
 
   uploadPost() {}
 

@@ -40,7 +40,7 @@ export class AuthProvider {
             .currentUser.sendEmailVerification()
             .then(res => {
               let userdata = JSON.parse(JSON.stringify(response));
-              this.createUser(
+              this.updateUser(
                 userdata.uid,
                 name,
                 username,
@@ -171,7 +171,7 @@ export class AuthProvider {
             .signInWithCredential(googleCredential)
             .then(response => {
               let userdata = JSON.parse(JSON.stringify(response));
-              this.createUser(
+              this.updateUser(
                 userdata.uid,
                 userdata.displayName,
                 userdata.email.substring(0, userdata.email.lastIndexOf('@')),
@@ -241,7 +241,7 @@ export class AuthProvider {
             .signInWithCredential(facebookCredential)
             .then(response => {
               let userdata = JSON.parse(JSON.stringify(response));
-              this.createUser(
+              this.updateUser(
                 userdata.uid,
                 userdata.displayName,
                 'NOUSERNAME',
@@ -330,7 +330,7 @@ export class AuthProvider {
     });
   }
 
-  createUser(uid, name, username, profilePhoto) {
+  updateUser(uid, name, username, profilePhoto) {
     return new Promise(resolve => {
       firebase
         .auth()
@@ -396,6 +396,16 @@ export class AuthProvider {
           console.error(err);
         });
     });
+  }
+
+  incrementUserEventParticipation(eventKey, type) {
+    this.usersdata.child(`events/${type}/${eventKey}`).set({
+      eventKey: eventKey,
+    });
+  }
+
+  decrementUserEventParticipation(eventKey, type) {
+    this.usersdata.child(`events/${type}/${eventKey}`).remove();
   }
 
   getActiveUser() {

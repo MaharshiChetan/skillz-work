@@ -7,11 +7,11 @@ import {
   ActionSheetController,
   Platform,
   LoadingController,
-  ToastController,
   NavParams,
 } from 'ionic-angular';
 import { CameraProvider } from '../../providers/camera/camera';
 import { AuthProvider } from '../../providers/auth/auth';
+import { Message } from '../../components/message/message.component';
 
 @IonicPage()
 @Component({
@@ -31,7 +31,7 @@ export class EditProfilePage {
     private platform: Platform,
     private loadingCtrl: LoadingController,
     private authService: AuthProvider,
-    private toastCtrl: ToastController
+    private presentMessage: Message
   ) {
     this.createForm();
   }
@@ -69,29 +69,41 @@ export class EditProfilePage {
           .getDownloadURL()
           .then(url => {
             this.authService
-              .createUser(uid, name, username, url)
+              .updateUser(uid, name, username, url)
               .then(res => {
                 loader.dismiss();
-                this.presentSuccessToast();
+                this.presentMessage.showToast(
+                  'Succefully updated your profile!',
+                  'success-toast'
+                );
                 this.navCtrl.popToRoot();
               })
               .catch(e => {
                 loader.dismiss();
-                this.presentFailToast();
+                this.presentMessage.showToast(
+                  'Failed to updated your profile!',
+                  'fail-toast'
+                );
               });
           });
       });
     } else {
       this.authService
-        .createUser(uid, name, username, this.userProfile.profilePhoto)
+        .updateUser(uid, name, username, this.userProfile.profilePhoto)
         .then(res => {
           loader.dismiss();
-          this.presentSuccessToast();
+          this.presentMessage.showToast(
+            'Succefully updated your profile!',
+            'success-toast'
+          );
           this.navCtrl.popToRoot();
         })
         .catch(e => {
           loader.dismiss();
-          this.presentFailToast();
+          this.presentMessage.showToast(
+            'Failed to updated your profile!',
+            'fail-toast'
+          );
         });
     }
   }
@@ -159,27 +171,5 @@ export class EditProfilePage {
         alert(error);
       }
     );
-  }
-
-  presentFailToast() {
-    this.toastCtrl
-      .create({
-        message: 'Failed to updated your profile!',
-        position: 'top',
-        duration: 2000,
-        cssClass: 'fail-toast',
-      })
-      .present();
-  }
-
-  presentSuccessToast() {
-    this.toastCtrl
-      .create({
-        message: 'Succefully updated your profile!',
-        position: 'top',
-        duration: 2000,
-        cssClass: 'success-toast',
-      })
-      .present();
   }
 }

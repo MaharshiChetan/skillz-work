@@ -23,6 +23,8 @@ export class EventsProvider {
         endDate: event.endDate,
         startTime: event.startTime,
         endTime: event.endTime,
+        startDateAndTime: event.startDateAndTime,
+        endDateAndTime: event.endDateAndTime,
         eventJudges: event.eventJudges,
         eventImage: eventImage,
         imageId: imageId,
@@ -44,6 +46,8 @@ export class EventsProvider {
         endDate: event.endDate,
         startTime: event.startTime,
         endTime: event.endTime,
+        startDateAndTime: event.startDateAndTime,
+        endDateAndTime: event.endDateAndTime,
         eventJudges: event.eventJudges,
         eventImage: eventImage,
         imageId: imageId,
@@ -57,19 +61,6 @@ export class EventsProvider {
     try {
       return this.db
         .list('events')
-        .snapshotChanges()
-        .pipe(
-          map(actions => actions.map(a => ({ key: a.key, ...a.payload.val() })))
-        );
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  fetchInterestedUsers(eventKey) {
-    try {
-      return this.db
-        .list(`events/${eventKey}/interested/users`)
         .snapshotChanges()
         .pipe(
           map(actions => actions.map(a => ({ key: a.key, ...a.payload.val() })))
@@ -108,44 +99,65 @@ export class EventsProvider {
     }
   }
 
-  async handleInterest(eventKey, user) {
+  fetchInterestedOrGoingUsers(eventKey, type) {
+    try {
+      return this.db
+        .list(`events/${eventKey}/${type}/users`)
+        .snapshotChanges()
+        .pipe(
+          map(actions => actions.map(a => ({ key: a.key, ...a.payload.val() })))
+        );
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async handleInterestOrGoing(eventKey, user, type) {
     let check = true;
     try {
       await this.eventData
-        .child(`${eventKey}/interested/users`)
+        .child(`${eventKey}/${type}/users`)
         .once('value', snapshot => {
           if (!snapshot.val()) {
-            this.incrementInterest(eventKey, user);
+            this.incrementInterestOrGoing(eventKey, user, type);
           } else {
             snapshot.forEach(childSnapshot => {
               if (childSnapshot.key === user.uid) {
-                this.decrementInterest(eventKey, user);
+                this.decrementInterestOrGoing(eventKey, user, type);
                 check = false;
               }
             });
           }
         });
       if (check) {
-        this.incrementInterest(eventKey, user);
+        this.incrementInterestOrGoing(eventKey, user, type);
       }
     } catch (e) {
       return e;
     }
   }
 
-  async incrementInterest(eventKey, user) {
+  incrementInterestOrGoing(eventKey, user, type) {
     try {
-      await this.eventData
-        .child(`${eventKey}/interested/users/${user.uid}`)
-        .set(user);
+      this.eventData.child(`${eventKey}/${type}/users/${user.uid}`).set(user);
     } catch (e) {
       return e;
     }
   }
 
-  decrementInterest(eventKey, user) {
+  decrementInterestOrGoing(eventKey, user, type) {
     try {
-      this.eventData.child(`${eventKey}/interested/users/${user.uid}`).remove();
+      this.eventData.child(`${eventKey}/${type}/users/${user.uid}`).remove();
+    } catch (e) {
+      return e;
+    }
+  }
+
+  async incrementShare(eventKey, user) {
+    try {
+      await this.eventData
+        .child(`${eventKey}/shares/users/${user.uid}`)
+        .set(user);
     } catch (e) {
       return e;
     }

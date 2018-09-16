@@ -37,7 +37,7 @@ export class MyEventsPage {
     });
   }
 
-  goToCreateEvent(event) {
+  goToCreateEventPage(event) {
     this.navCtrl.push('CreateEventPage', { eventData: event });
   }
 
@@ -71,5 +71,9 @@ export class MyEventsPage {
     } catch (e) {
       console.log(e);
     }
+  }
+
+  goToTrackEventPage(event) {
+    console.log(event);
   }
 }

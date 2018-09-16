@@ -8,17 +8,18 @@
 </ion-header>
 
 <ion-content>
-  <ion-row class="help">
-    <ion-col>
-      <ion-icon name="arrow-round-back"></ion-icon>
-      Slide left for more options
-      <ion-icon name="arrow-round-back"></ion-icon>
-    </ion-col>
-  </ion-row>
-
   <ion-refresher (ionRefresh)="getMyEvents($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
+
+  <ion-row class="help">
+    <ion-col>
+      <ion-icon name="arrow-round-back"></ion-icon>
+      Slide LEFT or RIGHT for more options
+      <ion-icon name="arrow-round-forward"></ion-icon>
+    </ion-col>
+  </ion-row>
+
   <ion-list>
     <ion-item-sliding *ngFor="let event of events">
       <ion-item>
@@ -27,18 +28,27 @@
         </ion-thumbnail>
         <h2>{{ event.eventName }}</h2>
         <p>{{ event.eventCity }}</p>
-        <p>{{ event.startDate }} {{ event.startTime }}</p>
+        <p>{{ event.startDateAndTime | date:'MMM d, y, h:mm
+          a'}}</p>
       </ion-item>
       <ion-item-options side="right">
-        <button ion-button color="danger" (click)="deleteEvent(event)">
-          <ion-icon ios="ios-trash" md="md-trash"></ion-icon>
-          Delete
+        <button ion-button color="secondary" (click)="goToTrackEventPage(event)">
+          <ion-icon md="md-analytics">
+          </ion-icon>
+          Track
         </button>
-        <button ion-button color="light" (click)="goToCreateEvent(event)">
+        <button ion-button color="light" (click)="goToCreateEventPage(event)">
           <ion-icon ios="ios-create" md="md-create"></ion-icon>
           Edit
         </button>
       </ion-item-options>
+      <ion-item-options side="left">
+        <button ion-button color="danger" (click)="deleteEvent(event)">
+          <ion-icon ios="ios-trash" md="md-trash"></ion-icon>
+          Delete
+        </button>
+      </ion-item-options>
+
     </ion-item-sliding>
   </ion-list>
 </ion-content>

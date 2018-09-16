@@ -1,0 +1,21 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>{{ type }}</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content>
+
+  <ion-list [virtualScroll]="users" [approxItemHeight]="'100px'">
+    <ion-item *virtualItem="let user">
+      <ion-avatar item-start>
+        <img [src]="user.profilePhoto">
+      </ion-avatar>
+      <h2>{{ user.userName }}</h2>
+      <p>{{ user.displayName }}</p>
+    </ion-item>
+  </ion-list>
+
+</ion-content>

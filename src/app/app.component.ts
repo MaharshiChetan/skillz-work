@@ -13,6 +13,7 @@ import { config } from './app.firebase';
 import firebase from 'firebase';
 import { Network } from '@ionic-native/network';
 import { Storage } from '@ionic/storage';
+import { Message } from '../components/message/message.component';
 
 @Component({
   templateUrl: 'app.html',
@@ -31,7 +32,8 @@ export class MyApp {
     public network: Network,
     public toastCtrl: ToastController,
     public menuCtrl: MenuController,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private presentMessage: Message
   ) {
     //INITIALIZES FIREBASE WITH THE APP
     firebase.initializeApp(config);
@@ -63,9 +65,9 @@ export class MyApp {
     //KEEPS CHECKING NETWORK CONNECTIVITY AND ALERTS USER IF DISCONNECTED
     this.network.onchange().subscribe(networkchange => {
       if (networkchange.type === 'online') {
-        this.presentToast('Back Online', 'toastonline');
+        this.presentMessage.showToast('Back Online', 'toastonline');
       } else if (networkchange.type === 'offline') {
-        this.presentToast('You Seem To Be Offline', 'toastoffline');
+        this.presentMessage.showToast('You Seem To Be Offline', 'toastoffline');
       }
     });
 
@@ -109,16 +111,5 @@ export class MyApp {
   goToMyEvents() {
     this.nav.push('MyEventsPage');
     this.menuCtrl.close();
-  }
-
-  presentToast(message, cssClass) {
-    this.toastCtrl
-      .create({
-        message: message,
-        duration: 2000,
-        position: 'top',
-        cssClass: cssClass,
-      })
-      .present();
   }
 }

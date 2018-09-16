@@ -7,7 +7,6 @@ import {
   Platform,
   LoadingController,
   ActionSheetController,
-  ToastController,
   AlertController,
 } from 'ionic-angular';
 import { CameraProvider } from '../../providers/camera/camera';
@@ -15,6 +14,7 @@ import { EventsProvider } from '../../providers/events/events';
 import firebase from 'firebase';
 import { AuthProvider } from '../../providers/auth/auth';
 import { AngularFireDatabase } from 'angularfire2/database';
+import { Message } from '../../components/message/message.component';
 
 @IonicPage()
 @Component({
@@ -46,7 +46,7 @@ export class CreateEventPage implements AfterViewInit {
     private element: ElementRef,
     private cameraService: CameraProvider,
     private loadingCtrl: LoadingController,
-    private toastCtrl: ToastController,
+    private presentMessage: Message,
     private actionsheetCtrl: ActionSheetController,
     private alertCtrl: AlertController,
     private platform: Platform,
@@ -237,9 +237,6 @@ export class CreateEventPage implements AfterViewInit {
   }
 
   submitForm(description) {
-    console.log(this.eventForm.get('startTime').value);
-    console.log(this.eventForm.get('endTime').value);
-
     const event = {
       eventName: this.eventForm.get('eventName').value,
       eventDescription: description.value,
@@ -250,6 +247,12 @@ export class CreateEventPage implements AfterViewInit {
       endDate: this.eventForm.get('endDate').value,
       startTime: this.eventForm.get('startTime').value,
       endTime: this.eventForm.get('endTime').value,
+      startDateAndTime: `${this.eventForm.get('startDate').value} ${
+        this.eventForm.get('startTime').value
+      }`,
+      endDateAndTime: `${this.eventForm.get('endDate').value} ${
+        this.eventForm.get('endTime').value
+      }`,
       eventJudges: this.judges,
     };
 
@@ -262,7 +265,7 @@ export class CreateEventPage implements AfterViewInit {
 
   updateEvent(event, eventKey?: any) {
     if (!(this.chosenPicture || this.eventData)) {
-      this.presentToast(
+      this.presentMessage.showToast(
         'Please upload event image, Its mandatory!',
         'fail-toast'
       );
@@ -287,13 +290,19 @@ export class CreateEventPage implements AfterViewInit {
             .updateEvent(event, url, eventKey, this.eventData.imageId)
             .then(res => {
               loader.dismiss();
-              this.presentToast('Successfully updated event!', 'success-toast');
+              this.presentMessage.showToast(
+                'Successfully updated event!',
+                'success-toast'
+              );
               this.showAlertMessage = false;
               this.navCtrl.popToRoot();
             })
             .catch(e => {
               loader.dismiss();
-              this.presentToast('Failed to update event!', 'fail-toast');
+              this.presentMessage.showToast(
+                'Failed to update event!',
+                'fail-toast'
+              );
             });
         });
       });
@@ -307,20 +316,29 @@ export class CreateEventPage implements AfterViewInit {
         )
         .then(res => {
           loader.dismiss();
-          this.presentToast('Successfully updated event!', 'success-toast');
+          this.presentMessage.showToast(
+            'Successfully updated event!',
+            'success-toast'
+          );
           this.showAlertMessage = false;
           this.navCtrl.popToRoot();
         })
         .catch(e => {
           loader.dismiss();
-          this.presentToast('Failed to update event!', 'fail-toast');
+          this.presentMessage.showToast(
+            'Failed to update event!',
+            'fail-toast'
+          );
         });
     } else {
       this.imageStore.putString(this.chosenPicture, 'data_url').then(res => {
         this.imageStore.getDownloadURL().then(url => {
           this.eventService.createEvent(event, url, imageId).then(res => {
             loader.dismiss();
-            this.presentToast('Successfully created event!', 'success-toast');
+            this.presentMessage.showToast(
+              'Successfully created event!',
+              'success-toast'
+            );
             this.showAlertMessage = false;
             this.navCtrl.popToRoot();
           });
@@ -356,18 +374,6 @@ export class CreateEventPage implements AfterViewInit {
     });
     prompt.present();
   }
-
-  presentToast(message: string, cssClass: string) {
-    return this.toastCtrl
-      .create({
-        message: message,
-        position: 'top',
-        duration: 2000,
-        cssClass: cssClass,
-      })
-      .present();
-  }
-
   private exitPage() {
     this.showAlertMessage = false;
     this.navCtrl.popToRoot();

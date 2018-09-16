@@ -36,14 +36,16 @@ $theme-color-3: #5e5874;
 
 $colors: (
   primary: #242424,
-  secondary: #32db64,
+  // primary: #387ef5,
+    secondary: #32db64,
   danger: #f53d3d,
   post: #545454,
   light: #f4f4f4,
   dark: #222,
   favorite: #69bb7b,
   nav: #242424,
-  btn: #387ef5,
+  // nav: #387ef5,
+    btn: #387ef5,
   walkthrough: (
     base: $theme-color-1,
     contrast: $white,

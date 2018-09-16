@@ -1,7 +1,8 @@
 <ion-header>
   <ion-navbar color="nav">
     <ion-buttons end>
-      <button ion-button (click)="submitForm(myInput)" [disabled]="!eventForm.valid">
+      <button ion-button (click)="submitForm(myInput)"
+        [disabled]="!eventForm.valid">
         {{ button | uppercase }}
       </button>
     </ion-buttons>
@@ -25,7 +26,8 @@
 
       <ion-item>
         <ion-label floating>Location(Full Address)</ion-label>
-        <ion-textarea formControlName="eventLocation" rows="3" (keyup)="adjust(1)"></ion-textarea>
+        <ion-textarea formControlName="eventLocation" rows="3"
+          (keyup)="adjust(1)"></ion-textarea>
       </ion-item>
       <ion-item>
         <ion-label floating>City</ion-label>
@@ -43,27 +45,29 @@
     <ion-list>
       <ion-item>
         <ion-label>Start Date</ion-label>
-        <ion-datetime pickerFormat="DD MMM YYYY" [min]="event.min" [max]="event.max"
-          formControlName="startDate"></ion-datetime>
+        <ion-datetime pickerFormat="DD MMM YYYY" [min]="event.min"
+          [max]="event.max" formControlName="startDate"></ion-datetime>
       </ion-item>
 
       <ion-item>
         <ion-label>End Date</ion-label>
-        <ion-datetime displayFormat="DD MMM YYYY" [min]="event.min" [max]="event.max"
-          formControlName="endDate"></ion-datetime>
+        <ion-datetime displayFormat="DD MMM YYYY" [min]="event.min"
+          [max]="event.max" formControlName="endDate"></ion-datetime>
       </ion-item>
 
       <ion-item>
         <ion-label>Start Time</ion-label>
-        <ion-datetime displayFormat="h:mm A" pickerFormat="h mm A" formControlName="startTime"></ion-datetime>
+        <ion-datetime displayFormat="h:mm A" pickerFormat="h mm A"
+          formControlName="startTime"></ion-datetime>
       </ion-item>
       <ion-item>
         <ion-label>End Time</ion-label>
-        <ion-datetime displayFormat="h:mm A" pickerFormat="h mm A" formControlName="endTime"></ion-datetime>
+        <ion-datetime displayFormat="h:mm A" pickerFormat="h mm A"
+          formControlName="endTime"></ion-datetime>
       </ion-item>
 
-      <img *ngIf="chosenPicture || eventData?.eventImage" [src]="chosenPicture || eventData?.eventImage"
-      />
+      <img *ngIf="chosenPicture || eventData?.eventImage"
+        [src]="chosenPicture || eventData?.eventImage" />
       <button type="button" ion-button icon-start (click)="uploadPicture()">
         <ion-icon name="camera"></ion-icon>
         {{ imageChoice }}
