@@ -1,10 +1,5 @@
 import { Component } from '@angular/core';
-import {
-  NavController,
-  IonicPage,
-  LoadingController,
-  AlertController,
-} from 'ionic-angular';
+import { NavController, IonicPage } from 'ionic-angular';
 import { EventsProvider } from '../../providers/events/events';
 
 @IonicPage()
@@ -13,12 +8,11 @@ import { EventsProvider } from '../../providers/events/events';
   templateUrl: 'events.html',
 })
 export class EventsPage {
-  events: any = [];
+  events: any[];
+  subscription: any;
   constructor(
     public navCtrl: NavController,
-    private eventService: EventsProvider,
-    private loadingCtrl: LoadingController,
-    private alertCtrl: AlertController
+    private eventService: EventsProvider
   ) {}
 
   ionViewDidLoad() {
@@ -26,30 +20,17 @@ export class EventsPage {
   }
 
   fetchEvents(refresher) {
-    if (refresher) {
-      this.eventService.fetchEvent().then(events => {
-        this.events = events;
-        refresher.complete();
-      });
-    } else {
-      const loader = this.loadingCtrl.create();
-      loader.present();
-      this.eventService.fetchEvent().then(events => {
-        this.events = events;
-        if (this.events.length <= 0) {
-          loader.dismiss();
-          const alert = this.alertCtrl.create({
-            title: 'Error!',
-            subTitle: 'There are no events right now!',
-            buttons: ['OK'],
-          });
-          alert.present();
-        } else {
-          loader.dismiss();
-        }
-      });
-    }
+    this.subscription = this.eventService.fetchEvents().subscribe(events => {
+      this.events = events;
+
+      if (refresher) refresher.complete();
+    });
   }
+
+  ionViewWillLeave() {
+    this.subscription.unsubscribe();
+  }
+
   goToEventDetails(event) {
     this.navCtrl.push('EventDetailsPage', { event: event });
   }

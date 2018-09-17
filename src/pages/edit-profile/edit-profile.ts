@@ -7,10 +7,11 @@ import {
   ActionSheetController,
   Platform,
   LoadingController,
-  ToastController,
+  NavParams,
 } from 'ionic-angular';
 import { CameraProvider } from '../../providers/camera/camera';
 import { AuthProvider } from '../../providers/auth/auth';
+import { Message } from '../../components/message/message.component';
 
 @IonicPage()
 @Component({
@@ -24,12 +25,13 @@ export class EditProfilePage {
 
   constructor(
     private navCtrl: NavController,
+    private navParams: NavParams,
     private actionsheetCtrl: ActionSheetController,
     private cameraService: CameraProvider,
     private platform: Platform,
     private loadingCtrl: LoadingController,
     private authService: AuthProvider,
-    private toastCtrl: ToastController
+    private presentMessage: Message
   ) {
     this.createForm();
   }
@@ -37,10 +39,8 @@ export class EditProfilePage {
   ionViewWillEnter() {
     const loader = this.loadingCtrl.create();
     loader.present();
-    this.authService.getUserDetails().then(userProfile => {
-      this.userProfile = userProfile;
-      loader.dismiss();
-    });
+    this.userProfile = this.navParams.get('userDetails');
+    loader.dismiss();
   }
 
   createForm() {
@@ -69,29 +69,41 @@ export class EditProfilePage {
           .getDownloadURL()
           .then(url => {
             this.authService
-              .createUser(uid, name, username, url)
+              .updateUser(uid, name, username, url)
               .then(res => {
                 loader.dismiss();
-                this.presentSuccessToast();
+                this.presentMessage.showToast(
+                  'Succefully updated your profile!',
+                  'success-toast'
+                );
                 this.navCtrl.popToRoot();
               })
               .catch(e => {
                 loader.dismiss();
-                this.presentFailToast();
+                this.presentMessage.showToast(
+                  'Failed to updated your profile!',
+                  'fail-toast'
+                );
               });
           });
       });
     } else {
       this.authService
-        .createUser(uid, name, username, this.userProfile.profilePhoto)
+        .updateUser(uid, name, username, this.userProfile.profilePhoto)
         .then(res => {
           loader.dismiss();
-          this.presentSuccessToast();
+          this.presentMessage.showToast(
+            'Succefully updated your profile!',
+            'success-toast'
+          );
           this.navCtrl.popToRoot();
         })
         .catch(e => {
           loader.dismiss();
-          this.presentFailToast();
+          this.presentMessage.showToast(
+            'Failed to updated your profile!',
+            'fail-toast'
+          );
         });
     }
   }
@@ -101,21 +113,21 @@ export class EditProfilePage {
       title: 'upload picture',
       buttons: [
         {
-          text: 'camera',
+          text: 'Camera',
           icon: !this.platform.is('ios') ? 'camera' : null,
           handler: () => {
             this.takePicture();
           },
         },
         {
-          text: !this.platform.is('ios') ? 'gallery' : 'camera roll',
+          text: !this.platform.is('ios') ? 'Gallery' : 'Camera roll',
           icon: !this.platform.is('ios') ? 'image' : null,
           handler: () => {
             this.getPicture();
           },
         },
         {
-          text: 'cancel',
+          text: 'Cancel',
           icon: !this.platform.is('ios') ? 'close' : null,
           role: 'destructive',
           handler: () => {
@@ -159,27 +171,5 @@ export class EditProfilePage {
         alert(error);
       }
     );
-  }
-
-  presentFailToast() {
-    this.toastCtrl
-      .create({
-        message: 'Failed to updated your profile!',
-        position: 'top',
-        duration: 2000,
-        cssClass: 'fail-toast',
-      })
-      .present();
-  }
-
-  presentSuccessToast() {
-    this.toastCtrl
-      .create({
-        message: 'Succefully updated your profile!',
-        position: 'top',
-        duration: 2000,
-        cssClass: 'success-toast',
-      })
-      .present();
   }
 }

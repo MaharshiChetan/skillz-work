@@ -1,0 +1,27 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>{{ type }}</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content>
+
+  <ion-list>
+    <ion-item *ngFor="let user of users">
+      <ion-avatar item-start>
+        <img [src]="user.profilePhoto">
+      </ion-avatar>
+      <h2>{{ user.userName }}</h2>
+      <p>{{ user.displayName }}</p>
+    </ion-item>
+  </ion-list>
+
+  <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+    <ion-infinite-scroll-content [loadingSpinner]="loader"
+      [loadingText]="loadingText">
+      ></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+</ion-content>

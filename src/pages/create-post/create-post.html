@@ -1,0 +1,32 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-buttons start>
+      <button ion-button (click)="sharePost(myInput)">
+        Share
+      </button>
+    </ion-buttons>
+    <ion-title></ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content padding class="content">
+  <ion-card class="content">
+
+    <ion-card-header>
+      Create Post
+    </ion-card-header>
+
+    <ion-card-content>
+      <img [src]="image" alt="" class="image">
+      <ion-list>
+        <ion-item class="write-post">
+          <!-- <ion-label stacked>Write Post</ion-label> -->
+          <ion-textarea placeholder="Write Post" #myInput (keyup)="adjust()"></ion-textarea>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+
+  </ion-card>
+</ion-content>

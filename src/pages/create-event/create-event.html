@@ -1,69 +1,91 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>Create Event</ion-title>
+  <ion-navbar color="nav">
+    <ion-buttons end>
+      <button ion-button (click)="submitForm(myInput)"
+        [disabled]="!eventForm.valid">
+        {{ button | uppercase }}
+      </button>
+    </ion-buttons>
+    <ion-title>{{ button }} Event</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content text-center>
-  <form [formGroup]="eventForm" (ngSubmit)="submitForm(myInput)">
+  <form [formGroup]="eventForm">
     <ion-list>
 
       <ion-item>
         <ion-label floating>Event Name (Title)</ion-label>
-        <ion-input name="eventName" formControlName="eventName"></ion-input>
+        <ion-input formControlName="eventName"></ion-input>
       </ion-item>
       <ion-item>
         <ion-label floating>Description of Event</ion-label>
-        <ion-textarea #myInput [value]="eventData?.eventDescription"
-          id="myInput" rows="1" maxLength="500" (keyup)="adjust()"></ion-textarea>
+        <ion-textarea #myInput rows="3" [value]="eventData?.eventDescription"
+          (keyup)="adjust(0)"></ion-textarea>
       </ion-item>
 
       <ion-item>
-        <ion-label floating>Location</ion-label>
-        <ion-input name="eventLocation" formControlName="eventLocation"></ion-input>
+        <ion-label floating>Location(Full Address)</ion-label>
+        <ion-textarea formControlName="eventLocation" rows="3"
+          (keyup)="adjust(1)"></ion-textarea>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>City</ion-label>
+        <ion-input formControlName="eventCity"></ion-input>
       </ion-item>
       <ion-item>
         <ion-label floating>
           <ion-icon name="cash"></ion-icon>
           Amount in Rupees
         </ion-label>
-        <ion-input type="number" name="eventPrice" formControlName="eventPrice"></ion-input>
+        <ion-input type="number" formControlName="eventPrice"></ion-input>
       </ion-item>
     </ion-list>
 
     <ion-list>
       <ion-item>
         <ion-label>Start Date</ion-label>
-        <ion-datetime displayFormat="MMM DD YYYY" name="startDate" formControlName="startDate"></ion-datetime>
+        <ion-datetime pickerFormat="DD MMM YYYY" [min]="event.min"
+          [max]="event.max" formControlName="startDate"></ion-datetime>
       </ion-item>
+
       <ion-item>
         <ion-label>End Date</ion-label>
-        <ion-datetime displayFormat="MMM DD YYYY" name="endDate" formControlName="endDate"></ion-datetime>
+        <ion-datetime displayFormat="DD MMM YYYY" [min]="event.min"
+          [max]="event.max" formControlName="endDate"></ion-datetime>
       </ion-item>
 
       <ion-item>
         <ion-label>Start Time</ion-label>
-        <ion-datetime displayFormat="h:mm A" pickerFormat="h mm A" name="startTime"
+        <ion-datetime displayFormat="h:mm A" pickerFormat="h mm A"
           formControlName="startTime"></ion-datetime>
       </ion-item>
       <ion-item>
         <ion-label>End Time</ion-label>
-        <ion-datetime displayFormat="h:mm A" pickerFormat="h mm A" name="endTime"
+        <ion-datetime displayFormat="h:mm A" pickerFormat="h mm A"
           formControlName="endTime"></ion-datetime>
       </ion-item>
 
-      <img *ngIf="chosenPicture || eventData?.eventImage" [src]="chosenPicture || eventData?.eventImage"
-      />
+      <img *ngIf="chosenPicture || eventData?.eventImage"
+        [src]="chosenPicture || eventData?.eventImage" />
       <button type="button" ion-button icon-start (click)="uploadPicture()">
         <ion-icon name="camera"></ion-icon>
         {{ imageChoice }}
       </button>
 
+      <ion-item-group>
+        <ion-item-divider color="light">Judges</ion-item-divider>
+        <ion-item *ngFor="let judge of judges">
+          {{ judge.name }}
+        </ion-item>
+      </ion-item-group>
+
       <div padding>
-        <button type="submit" block ion-button block [disabled]="!eventForm.valid">
-          Create Event
+        <button type="button" block ion-button (click)="addJudges()">
+          Add Judges For Voting
         </button>
       </div>
+
 
     </ion-list>
   </form>

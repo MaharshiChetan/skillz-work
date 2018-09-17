@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-navbar>
+  <ion-navbar color="nav">
     <button ion-button icon-only menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
@@ -11,15 +11,17 @@
   <ion-refresher (ionRefresh)="fetchEvents($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-  <ion-list>
-    <ion-item *ngFor="let e of events">
+  <ion-list [virtualScroll]="events" [approxItemHeight]="'100px'">
+    <ion-item *virtualItem="let e" class="click" (click)="goToEventDetails(e)">
       <ion-thumbnail item-start>
         <img [src]="e.eventImage">
       </ion-thumbnail>
       <h2>{{ e.eventName }}</h2>
-      <p>{{ e.eventLocation }}</p>
-      <p>{{ e.startDate }} {{ e.startTime }}AM</p>
-      <button ion-button clear item-end (click)="goToEventDetails(e)">View</button>
+      <p>{{ e.eventCity }}</p>
+      <p>{{ e.startDateAndTime | date:'MMM d, y, h:mm a'
+        }}
+      </p>
+      <!-- <button ion-button clear item-end>View</button> -->
     </ion-item>
   </ion-list>
 </ion-content>

@@ -1,13 +1,19 @@
-<ion-header>
-  <ion-navbar>
+<ion-header [ngClass]="{'hide-header':showheader,'show-header':hideheader}">
+  <ion-navbar color="nav">
     <button ion-button icon-only menuToggle>
-      <ion-icon name="menu"></ion-icon>
+      <ion-icon ios="ios-menu" md="md-menu"></ion-icon>
     </button>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="editUserProfile(fab)">
+        <ion-icon ios="ios-create-outline" md="md-create"></ion-icon>
+      </button>
+    </ion-buttons>
     <ion-title>
       Profile
     </ion-title>
   </ion-navbar>
 </ion-header>
+
 <ion-content class="container transparent-header">
   <ion-refresher (ionRefresh)="fetchUserProfile($event)">
     <ion-refresher-content></ion-refresher-content>
@@ -15,50 +21,30 @@
   <div class="card-profile" *ngIf="userDetails">
     <div class="card-profile_visual">
       <img [src]="userDetails.profilePhoto" style="opacity: 0.5;" height="100%"
-        width="100%" />
+        width="100%" #myImage (click)="presentImage(myImage)" />
     </div>
 
     <div class="card-profile_user-infos">
       <span class="infos_name">{{userDetails.displayName}}</span>
       <span class="infos_nick">@{{userDetails.userName}}</span>
-      <ion-fab center middle #fab>
-        <button ion-fab color="danger">
+      <ion-fab>
+        <button ion-fab color="post" (click)="changePicture()">
           <ion-icon name="add"></ion-icon>
         </button>
-        <!-- <ion-fab-list side="top">
-          <button ion-fab color="primary" (click)="goToMyEvents()">
-            <ion-icon ios="ios-images" md="md-images"></ion-icon>
-          </button>
-        </ion-fab-list> -->
-        <!-- <ion-fab-list side="bottom">
-          <button ion-fab color="secondary">
-            <ion-icon name="logo-facebook"></ion-icon>
-          </button>
-        </ion-fab-list> -->
-        <ion-fab-list side="left">
-          <button ion-fab color="light" (click)="editUserProfile(fab)">
-            <ion-icon ios="ios-create" md="md-create"></ion-icon>
-          </button>
-        </ion-fab-list>
-        <ion-fab-list side="right">
-          <button ion-fab color="dark" (click)="goToSettingsModal(fab)">
-            <ion-icon name="md-settings"></ion-icon>
-          </button>
-        </ion-fab-list>
       </ion-fab>
     </div>
     <div class="card-profile_user-stats">
       <div class="stats-holder">
         <div class="user-stats">
-          <strong>Tweets</strong>
+          <strong>Posts</strong>
           <span>{{user.tweets}}</span>
         </div>
         <div class="user-stats">
-          <strong>Following</strong>
+          <strong>Droping</strong>
           <span>{{user.following}}</span>
         </div>
         <div class="user-stats">
-          <strong>Followers</strong>
+          <strong>Dropers</strong>
           <span>{{user.followers}}</span>
         </div>
       </div>

@@ -120,7 +120,6 @@ export class LoginPage {
     this.authService
       .registerWithGoogle()
       .then(res => {
-        alert(res);
         if (res === true) {
           loader.dismiss();
           this.navCtrl.setRoot('TabsPage');

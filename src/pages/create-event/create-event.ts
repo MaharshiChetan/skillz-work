@@ -1,4 +1,4 @@
-import { Component, Directive, HostListener, ElementRef } from '@angular/core';
+import { Component, ElementRef, AfterViewInit } from '@angular/core';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import {
   IonicPage,
@@ -7,61 +7,115 @@ import {
   Platform,
   LoadingController,
   ActionSheetController,
-  ToastController,
+  AlertController,
 } from 'ionic-angular';
 import { CameraProvider } from '../../providers/camera/camera';
 import { EventsProvider } from '../../providers/events/events';
 import firebase from 'firebase';
 import { AuthProvider } from '../../providers/auth/auth';
+import { AngularFireDatabase } from 'angularfire2/database';
+import { Message } from '../../components/message/message.component';
 
 @IonicPage()
 @Component({
   selector: 'create-event-page',
   templateUrl: 'create-event.html',
 })
-@Directive({
-  selector: 'ion-textarea[autosize]', // Attribute selector,
-})
-export class CreateEventPage {
+export class CreateEventPage implements AfterViewInit {
   eventForm: FormGroup;
-  imageUrl: string;
   eventData: any;
-  des = 'this is event';
-
-  @HostListener('document:keydown.enter', ['$event'])
-  onKeydownHandler(evt: KeyboardEvent) {
-    this.adjust();
-  }
-
+  imageStore: any;
+  button: string = 'Create';
+  subscription: any;
   imageChoice = 'Upload Image';
-  Text = {} as Text;
   chosenPicture: string;
-
-  public event = {
+  judges = [];
+  event = {
     startTime: '10:00',
-    endTime: '07:00',
-    startDate: '2018-01-01',
-    endDate: '2018-01-01',
+    endTime: '19:00',
+    startDate: this.currentDate(),
+    endDate: this.currentDate(),
+    min: new Date().getFullYear(),
+    max: new Date().getFullYear() + 1,
   };
+  showAlertMessage = true;
+
   constructor(
-    public navCtrl: NavController,
-    public navParams: NavParams,
-    public element: ElementRef,
+    private navCtrl: NavController,
+    private navParams: NavParams,
+    private element: ElementRef,
     private cameraService: CameraProvider,
     private loadingCtrl: LoadingController,
-    private toastCtrl: ToastController,
+    private presentMessage: Message,
     private actionsheetCtrl: ActionSheetController,
+    private alertCtrl: AlertController,
     private platform: Platform,
     private eventService: EventsProvider,
-    private authService: AuthProvider
+    private authService: AuthProvider,
+    private db: AngularFireDatabase
   ) {
     this.eventData = this.navParams.get('eventData');
+
+    if (this.eventData) {
+      this.button = 'Update';
+      this.judges = this.eventData.eventJudges || [];
+    }
+
     this.createForm();
-    if (this.chosenPicture) {
-      this.imageChoice = 'Change Image';
+    if (this.chosenPicture || this.eventData) this.imageChoice = 'Change Image';
+  }
+
+  ngAfterViewInit() {
+    this.adjust(0);
+  }
+
+  ionViewCanLeave() {
+    if (!this.eventData) {
+      if (this.showAlertMessage) {
+        let alertPopup = this.alertCtrl.create({
+          title: 'Discard Event?',
+          message: "This event won't be saved.",
+          buttons: [
+            {
+              text: 'Discard Event',
+              handler: () => {
+                alertPopup.dismiss().then(() => {
+                  this.exitPage();
+                });
+                return false;
+              },
+            },
+            {
+              text: 'Cancel',
+              handler: () => {},
+            },
+          ],
+        });
+        alertPopup.present();
+        return false;
+      }
     }
   }
 
+  currentDate() {
+    const splitDate = new Date().toLocaleDateString().split('/');
+    splitDate[1] = splitDate[1].length == 1 ? '0' + splitDate[1] : splitDate[1];
+    splitDate[0] = splitDate[0].length == 1 ? '0' + splitDate[0] : splitDate[0];
+    return `${splitDate[2]}-${splitDate[0]}-${splitDate[1]}`;
+  }
+  /*
+  formatAMPM(time) {
+    const hoursMinutes = time.split(':');
+    let hours = hoursMinutes[0];
+    let minutes = hoursMinutes[1];
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    minutes = minutes < 10 ? minutes : minutes;
+    const strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
+  }
+ */
   createForm() {
     if (this.eventData) {
       this.eventForm = new FormGroup({
@@ -87,6 +141,10 @@ export class CreateEventPage {
           this.eventData.eventLocation,
           Validators.required
         ),
+        eventCity: new FormControl(
+          this.eventData.eventCity,
+          Validators.required
+        ),
       });
     } else {
       this.eventForm = new FormGroup({
@@ -97,6 +155,7 @@ export class CreateEventPage {
         endTime: new FormControl(this.event.endTime, Validators.required),
         eventPrice: new FormControl('', Validators.required),
         eventLocation: new FormControl('', Validators.required),
+        eventCity: new FormControl('', Validators.required),
       });
     }
   }
@@ -106,14 +165,14 @@ export class CreateEventPage {
       title: 'upload picture',
       buttons: [
         {
-          text: 'camera',
+          text: 'Camera',
           icon: !this.platform.is('ios') ? 'camera' : null,
           handler: () => {
             this.takePicture();
           },
         },
         {
-          text: !this.platform.is('ios') ? 'gallery' : 'camera roll',
+          text: !this.platform.is('ios') ? 'Gallery' : 'Camera roll',
           icon: !this.platform.is('ios') ? 'image' : null,
           handler: () => {
             this.getPicture();
@@ -140,6 +199,7 @@ export class CreateEventPage {
       picture => {
         if (picture) {
           this.chosenPicture = picture;
+          this.imageChoice = 'Change Image';
         }
         loading.dismiss();
       },
@@ -157,6 +217,7 @@ export class CreateEventPage {
       picture => {
         if (picture) {
           this.chosenPicture = picture;
+          this.imageChoice = 'Change Image';
         }
         loading.dismiss();
       },
@@ -165,185 +226,156 @@ export class CreateEventPage {
       }
     );
   }
-  ngAfterViewInit() {
-    this.adjust();
-  }
 
-  adjust(): void {
-    let textArea = this.element.nativeElement.getElementsByTagName(
-      'textarea'
-    )[0];
+  adjust(index): void {
+    let textArea = this.element.nativeElement.getElementsByTagName('textarea')[
+      index
+    ];
     textArea.style.overflow = 'hidden';
     textArea.style.height = 'auto';
-    textArea.style.height = textArea.scrollHeight + 32 + 'px';
+    textArea.style.height = textArea.scrollHeight + 10 + 'px';
   }
 
   submitForm(description) {
-    const eventName = this.eventForm.get('eventName').value;
-    const eventDescription = description.value;
-    const eventLocation = this.eventForm.get('eventLocation').value;
-    const eventPrice = this.eventForm.get('eventPrice').value;
-    const startDate = this.eventForm.get('startDate').value;
-    const endDate = this.eventForm.get('endDate').value;
-    const startTime = this.eventForm.get('startTime').value;
-    const endTime = this.eventForm.get('endTime').value;
+    const event = {
+      eventName: this.eventForm.get('eventName').value,
+      eventDescription: description.value,
+      eventLocation: this.eventForm.get('eventLocation').value,
+      eventCity: this.eventForm.get('eventCity').value,
+      eventPrice: this.eventForm.get('eventPrice').value,
+      startDate: this.eventForm.get('startDate').value,
+      endDate: this.eventForm.get('endDate').value,
+      startTime: this.eventForm.get('startTime').value,
+      endTime: this.eventForm.get('endTime').value,
+      startDateAndTime: `${this.eventForm.get('startDate').value} ${
+        this.eventForm.get('startTime').value
+      }`,
+      endDateAndTime: `${this.eventForm.get('endDate').value} ${
+        this.eventForm.get('endTime').value
+      }`,
+      eventJudges: this.judges,
+    };
 
     if (this.eventData) {
-      this.updateEvent(
-        eventName,
-        eventDescription,
-        eventLocation,
-        eventPrice,
-        startDate,
-        endDate,
-        startTime,
-        endTime,
-        this.eventData.eventNumber
-      );
+      this.updateEvent(event, this.eventData.key);
     } else {
-      this.updateEvent(
-        eventName,
-        eventDescription,
-        eventLocation,
-        eventPrice,
-        startDate,
-        endDate,
-        startTime,
-        endTime
-      );
+      this.updateEvent(event);
     }
   }
 
-  updateEvent(
-    eventName,
-    eventDescription,
-    eventLocation,
-    eventPrice,
-    startDate,
-    endDate,
-    startTime,
-    endTime,
-    eventNumber?: any
-  ) {
+  updateEvent(event, eventKey?: any) {
     if (!(this.chosenPicture || this.eventData)) {
-      this.toastCtrl
-        .create({
-          message: 'Please upload event image, Its mandatory!',
-          position: 'top',
-          duration: 2000,
-          cssClass: 'fail-toast',
-        })
-        .present();
+      this.presentMessage.showToast(
+        'Please upload event image, Its mandatory!',
+        'fail-toast'
+      );
       return;
     }
     const loader = this.loadingCtrl.create();
     loader.present();
-
     const uid = this.authService.getActiveUser().uid;
-    const imageStore = firebase
+
+    let imageId = this.eventData
+      ? this.eventData.imageId
+      : this.db.createPushId();
+
+    this.imageStore = firebase
       .storage()
       .ref('/eventImages')
-      .child(uid);
-    if (this.chosenPicture && eventNumber) {
-      imageStore.putString(this.chosenPicture, 'data_url').then(res => {
-        imageStore.getDownloadURL().then(url => {
-          this.imageUrl = url;
+      .child(`${uid}/${imageId}`);
+    if (this.chosenPicture && eventKey) {
+      this.imageStore.putString(this.chosenPicture, 'data_url').then(res => {
+        this.imageStore.getDownloadURL().then(url => {
           this.eventService
-            .createEvent(
-              eventName,
-              eventDescription,
-              eventLocation,
-              eventPrice,
-              startDate,
-              endDate,
-              startTime,
-              endTime,
-              this.imageUrl,
-              eventNumber
-            )
+            .updateEvent(event, url, eventKey, this.eventData.imageId)
             .then(res => {
               loader.dismiss();
-              this.presentSuccessToast();
+              this.presentMessage.showToast(
+                'Successfully updated event!',
+                'success-toast'
+              );
+              this.showAlertMessage = false;
               this.navCtrl.popToRoot();
             })
             .catch(e => {
               loader.dismiss();
-              this.presentFailToast();
+              this.presentMessage.showToast(
+                'Failed to update event!',
+                'fail-toast'
+              );
             });
         });
       });
     } else if (this.eventData) {
       this.eventService
-        .createEvent(
-          eventName,
-          eventDescription,
-          eventLocation,
-          eventPrice,
-          startDate,
-          endDate,
-          startTime,
-          endTime,
+        .updateEvent(
+          event,
           this.eventData.eventImage || this.chosenPicture,
-          eventNumber
+          eventKey,
+          this.eventData.imageId
         )
         .then(res => {
           loader.dismiss();
-          this.presentSuccessToast();
+          this.presentMessage.showToast(
+            'Successfully updated event!',
+            'success-toast'
+          );
+          this.showAlertMessage = false;
           this.navCtrl.popToRoot();
         })
         .catch(e => {
           loader.dismiss();
-          this.presentFailToast();
+          this.presentMessage.showToast(
+            'Failed to update event!',
+            'fail-toast'
+          );
         });
     } else {
-      imageStore.putString(this.chosenPicture, 'data_url').then(res => {
-        imageStore.getDownloadURL().then(url => {
-          this.imageUrl = url;
-          this.eventService
-            .createEvent(
-              eventName,
-              eventDescription,
-              eventLocation,
-              eventPrice,
-              startDate,
-              endDate,
-              startTime,
-              endTime,
-              this.imageUrl
-            )
-            .then(res => {
-              loader.dismiss();
-              this.presentSuccessToast();
-              this.navCtrl.popToRoot();
-            })
-            .catch(e => {
-              loader.dismiss();
-              this.presentFailToast();
-            });
+      this.imageStore.putString(this.chosenPicture, 'data_url').then(res => {
+        this.imageStore.getDownloadURL().then(url => {
+          this.eventService.createEvent(event, url, imageId).then(res => {
+            loader.dismiss();
+            this.presentMessage.showToast(
+              'Successfully created event!',
+              'success-toast'
+            );
+            this.showAlertMessage = false;
+            this.navCtrl.popToRoot();
+          });
         });
       });
     }
   }
 
-  presentFailToast() {
-    this.toastCtrl
-      .create({
-        message: 'Failed to create event!',
-        position: 'top',
-        duration: 2000,
-        cssClass: 'fail-toast',
-      })
-      .present();
+  addJudges() {
+    const prompt = this.alertCtrl.create({
+      title: 'Add Judge',
+      message: 'Enter the name of judge.',
+      inputs: [
+        {
+          name: 'judge',
+          placeholder: 'Judge',
+        },
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          handler: data => {
+            console.log('Cancel clicked');
+          },
+        },
+        {
+          text: 'Add',
+          handler: data => {
+            this.judges.push({ name: data.judge, totalVotes: 0 });
+          },
+        },
+      ],
+    });
+    prompt.present();
   }
-
-  presentSuccessToast() {
-    this.toastCtrl
-      .create({
-        message: 'Succefully created event!',
-        position: 'top',
-        duration: 2000,
-        cssClass: 'success-toast',
-      })
-      .present();
+  private exitPage() {
+    this.showAlertMessage = false;
+    this.navCtrl.popToRoot();
   }
 }

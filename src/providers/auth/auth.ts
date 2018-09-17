@@ -40,7 +40,7 @@ export class AuthProvider {
             .currentUser.sendEmailVerification()
             .then(res => {
               let userdata = JSON.parse(JSON.stringify(response));
-              this.createUser(
+              this.updateUser(
                 userdata.uid,
                 name,
                 username,
@@ -171,7 +171,7 @@ export class AuthProvider {
             .signInWithCredential(googleCredential)
             .then(response => {
               let userdata = JSON.parse(JSON.stringify(response));
-              this.createUser(
+              this.updateUser(
                 userdata.uid,
                 userdata.displayName,
                 userdata.email.substring(0, userdata.email.lastIndexOf('@')),
@@ -241,7 +241,7 @@ export class AuthProvider {
             .signInWithCredential(facebookCredential)
             .then(response => {
               let userdata = JSON.parse(JSON.stringify(response));
-              this.createUser(
+              this.updateUser(
                 userdata.uid,
                 userdata.displayName,
                 'NOUSERNAME',
@@ -330,22 +330,23 @@ export class AuthProvider {
     });
   }
 
-  createUser(uid, name, username, displayPic) {
+  updateUser(uid, name, username, profilePhoto) {
     return new Promise(resolve => {
       firebase
         .auth()
         .currentUser.updateProfile({
           displayName: name,
-          photoURL: displayPic,
+          photoURL: profilePhoto,
         })
         .then(res => {
           this.usersdata
             .child(firebase.auth().currentUser.uid)
+            .child('personalData')
             .set({
               uid: firebase.auth().currentUser.uid,
               displayName: name,
               userName: username,
-              profilePhoto: displayPic,
+              profilePhoto: profilePhoto,
             })
             .then(res => {
               resolve(true);
@@ -368,7 +369,7 @@ export class AuthProvider {
         .get('user')
         .then(res => {
           this.usersdata
-            .child(res)
+            .child(`${res}/personalData`)
             .once('value', snapshot => {
               resolve(snapshot.toJSON());
             })
@@ -395,6 +396,16 @@ export class AuthProvider {
           console.error(err);
         });
     });
+  }
+
+  incrementUserEventParticipation(eventKey, type) {
+    this.usersdata.child(`events/${type}/${eventKey}`).set({
+      eventKey: eventKey,
+    });
+  }
+
+  decrementUserEventParticipation(eventKey, type) {
+    this.usersdata.child(`events/${type}/${eventKey}`).remove();
   }
 
   getActiveUser() {

@@ -1,110 +1,167 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import firebase from 'firebase';
+import { AngularFireDatabase } from 'angularfire2/database';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class EventsProvider {
   eventData: any = firebase.database().ref('/events');
-  constructor(public http: HttpClient) {}
+  imageStore = firebase.storage().ref('/eventImages');
 
-  createEvent(
-    eventName,
-    eventDescription,
-    eventLocation,
-    eventPrice,
-    startDate,
-    endDate,
-    startTime,
-    endTime,
-    eventImage,
-    eventNumber?: any
-  ) {
-    if (eventNumber) {
-      return new Promise(resolve => {
-        this.eventData
-          .child(`/${eventNumber}`)
-          .set({
-            uid: firebase.auth().currentUser.uid,
-            eventName: eventName,
-            eventNumber: eventNumber,
-            eventDescription: eventDescription,
-            eventLocation: eventLocation,
-            eventPrice: eventPrice,
-            startDate: startDate,
-            endDate: endDate,
-            startTime: startTime,
-            endTime: endTime,
-            eventImage: eventImage,
-          })
-          .then(res => {
-            resolve(true);
-          })
-          .catch(err => {
-            console.error(err);
-            resolve(false);
-          });
+  constructor(private db: AngularFireDatabase) {}
+
+  createEvent(event, eventImage, imageId) {
+    try {
+      return this.db.list('events').push({
+        uid: firebase.auth().currentUser.uid,
+        eventName: event.eventName,
+        eventDescription: event.eventDescription,
+        eventLocation: event.eventLocation,
+        eventCity: event.eventCity,
+        eventPrice: event.eventPrice,
+        startDate: event.startDate,
+        endDate: event.endDate,
+        startTime: event.startTime,
+        endTime: event.endTime,
+        startDateAndTime: event.startDateAndTime,
+        endDateAndTime: event.endDateAndTime,
+        eventJudges: event.eventJudges,
+        eventImage: eventImage,
+        imageId: imageId,
       });
-    } else {
-      return new Promise(resolve => {
-        this.fetchLastEvent().then(lastEvent => {
-          this.eventData
-            .child(`/${lastEvent}`)
-            .set({
-              uid: firebase.auth().currentUser.uid,
-              eventName: eventName,
-              eventNumber: lastEvent,
-              eventDescription: eventDescription,
-              eventLocation: eventLocation,
-              eventPrice: eventPrice,
-              startDate: startDate,
-              endDate: endDate,
-              startTime: startTime,
-              endTime: endTime,
-              eventImage: eventImage,
-            })
-            .then(res => {
-              resolve(true);
-            })
-            .catch(err => {
-              console.error(err);
-              resolve(false);
-            });
-        });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  updateEvent(event, eventImage, key, imageId) {
+    try {
+      return this.db.object(`events/${key}`).update({
+        uid: firebase.auth().currentUser.uid,
+        eventName: event.eventName,
+        eventDescription: event.eventDescription,
+        eventLocation: event.eventLocation,
+        eventCity: event.eventCity,
+        eventPrice: event.eventPrice,
+        startDate: event.startDate,
+        endDate: event.endDate,
+        startTime: event.startTime,
+        endTime: event.endTime,
+        startDateAndTime: event.startDateAndTime,
+        endDateAndTime: event.endDateAndTime,
+        eventJudges: event.eventJudges,
+        eventImage: eventImage,
+        imageId: imageId,
       });
+    } catch (e) {
+      console.log(e);
     }
   }
 
-  fetchLastEvent() {
-    return new Promise((resolve, reject) => {
-      this.eventData
-        .once('value', snapshot => {
-          if (!snapshot.val()) {
-            resolve(1);
-          } else {
-            resolve(snapshot.val().length);
-          }
-        })
-        .catch(err => {
-          reject(err);
-        });
-    });
+  fetchEvents() {
+    try {
+      return this.db
+        .list('events')
+        .snapshotChanges()
+        .pipe(
+          map(actions => actions.map(a => ({ key: a.key, ...a.payload.val() })))
+        );
+    } catch (e) {
+      console.log(e);
+    }
   }
 
-  fetchEvent() {
-    return new Promise(resolve => {
+  deleteEvent(event) {
+    try {
+      this.imageStore
+        .child(`${firebase.auth().currentUser.uid}/${event.imageId}`)
+        .delete()
+        .then(() => {
+          this.eventData.child(event.key).remove();
+        });
+    } catch (e) {
+      return e;
+    }
+  }
+
+  submitVote(event) {
+    try {
       this.eventData
+        .child(`${event.key}/eventJudges/${event.judgeId}`)
         .once('value', snapshot => {
-          const value = [];
-          if (snapshot.val()) {
-            snapshot.forEach(function(childSnapshot) {
-              value.push(childSnapshot.val());
+          return this.db
+            .object(`events/${event.key}/eventJudges/${event.judgeId}`)
+            .update({
+              totalVotes: snapshot.val().totalVotes + 1,
+            });
+        });
+    } catch (e) {
+      return e;
+    }
+  }
+
+  fetchInterestedOrGoingUsers(eventKey, type) {
+    try {
+      return this.db
+        .list(`events/${eventKey}/${type}/users`)
+        .snapshotChanges()
+        .pipe(
+          map(actions => actions.map(a => ({ key: a.key, ...a.payload.val() })))
+        );
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async handleInterestOrGoing(eventKey, user, type) {
+    let check = true;
+    try {
+      await this.eventData
+        .child(`${eventKey}/${type}/users`)
+        .once('value', snapshot => {
+          if (!snapshot.val()) {
+            this.incrementInterestOrGoing(eventKey, user, type);
+          } else {
+            snapshot.forEach(childSnapshot => {
+              if (childSnapshot.key === user.uid) {
+                this.decrementInterestOrGoing(eventKey, user, type);
+                check = false;
+              }
             });
           }
-          resolve(value);
-        })
-        .catch(err => {
-          console.error(err);
         });
-    });
+      if (check) {
+        this.incrementInterestOrGoing(eventKey, user, type);
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+  incrementInterestOrGoing(eventKey, user, type) {
+    try {
+      this.eventData.child(`${eventKey}/${type}/users/${user.uid}`).set({
+        uid: user.uid,
+      });
+    } catch (e) {
+      return e;
+    }
+  }
+
+  decrementInterestOrGoing(eventKey, user, type) {
+    try {
+      this.eventData.child(`${eventKey}/${type}/users/${user.uid}`).remove();
+    } catch (e) {
+      return e;
+    }
+  }
+
+  async incrementShare(eventKey, user) {
+    try {
+      await this.eventData.child(`${eventKey}/shares/users/${user.uid}`).set({
+        uid: user.uid,
+      });
+    } catch (e) {
+      return e;
+    }
   }
 }
