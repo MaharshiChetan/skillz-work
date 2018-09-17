@@ -8,8 +8,8 @@
 
 <ion-content>
 
-  <ion-list [virtualScroll]="users" [approxItemHeight]="'100px'">
-    <ion-item *virtualItem="let user">
+  <ion-list>
+    <ion-item *ngFor="let user of users">
       <ion-avatar item-start>
         <img [src]="user.profilePhoto">
       </ion-avatar>
@@ -17,5 +17,11 @@
       <p>{{ user.displayName }}</p>
     </ion-item>
   </ion-list>
+
+  <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles"
+      loadingText="Loading more users...">
+      ></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 
 </ion-content>

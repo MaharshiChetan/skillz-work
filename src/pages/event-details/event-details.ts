@@ -137,12 +137,8 @@ export class EventDetailsPage implements OnInit {
     this.authService.getUserDetails().then(user => {
       try {
         this.eventService.handleInterestOrGoing(eventKey, user, type);
-        if (type === 'interested') {
-          this.interested = !this.interested;
-        }
-        if (type === 'going') {
-          this.going = !this.going;
-        }
+        if (type === 'interested') this.interested = !this.interested;
+        if (type === 'going') this.going = !this.going;
       } catch (e) {
         alert(e);
       }
@@ -239,6 +235,7 @@ export class EventDetailsPage implements OnInit {
       this.eventService.incrementShare(this.event.key, user);
     });
   }
+
   createLoading() {
     return this.loadingCtrl.create({
       content: 'Please wait...',

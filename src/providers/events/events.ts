@@ -139,7 +139,9 @@ export class EventsProvider {
 
   incrementInterestOrGoing(eventKey, user, type) {
     try {
-      this.eventData.child(`${eventKey}/${type}/users/${user.uid}`).set(user);
+      this.eventData.child(`${eventKey}/${type}/users/${user.uid}`).set({
+        uid: user.uid,
+      });
     } catch (e) {
       return e;
     }
@@ -155,9 +157,9 @@ export class EventsProvider {
 
   async incrementShare(eventKey, user) {
     try {
-      await this.eventData
-        .child(`${eventKey}/shares/users/${user.uid}`)
-        .set(user);
+      await this.eventData.child(`${eventKey}/shares/users/${user.uid}`).set({
+        uid: user.uid,
+      });
     } catch (e) {
       return e;
     }
